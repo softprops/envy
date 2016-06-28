@@ -1,7 +1,6 @@
 extern crate serde;
 
 use serde::de;
-use std::env::Vars;
 use std::collections::HashMap;
 use std::fmt;
 use std::error;
@@ -62,10 +61,10 @@ struct Deserializer {
 
 impl Deserializer {
     fn new(vars: HashMap<String, String>) -> Deserializer {
-            Deserializer {
-                vars: vars,
-                stack: vec!()
-            }
+        Deserializer {
+            vars: vars,
+            stack: vec![],
+        }
     }
 }
 
@@ -74,11 +73,9 @@ pub fn from_env<T>() -> Result<T>
 {
     let mut vars = std::collections::HashMap::new();
     for (k, v) in ::std::env::vars() {
-        vars.insert(k,v);
+        vars.insert(k, v);
     }
-    let mut deser = Deserializer::new(
-        vars
-    );
+    let mut deser = Deserializer::new(vars);
     let value = try!(de::Deserialize::deserialize(&mut deser));
     Ok(value)
 }
@@ -100,7 +97,7 @@ impl de::Deserializer for Deserializer {
     {
         for f in _fields {
             let key = f.to_string().to_uppercase();
-            let value = self.vars.get(&key).map(|v|v.clone());
+            let value = self.vars.get(&key).map(|v| v.clone());
             self.stack.push(Var {
                 key: key,
                 struct_field: f.to_string(),
