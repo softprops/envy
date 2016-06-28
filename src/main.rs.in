@@ -1,5 +1,6 @@
 #[derive(Deserialize, Debug)]
 pub struct Foo {
     bar: String,
-    baz: u32
+    baz: bool,
+    zoom: u16
 }
