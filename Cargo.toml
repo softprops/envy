@@ -3,6 +3,5 @@ name = "envy"
 version = "0.1.0"
 authors = ["softprops <d.tangren@gmail.com>"]
 
-
 [dependencies]
-serde = "*"
+serde = "0.7"
