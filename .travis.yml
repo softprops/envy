@@ -7,8 +7,8 @@ matrix:
   - rust: beta
   - rust: stable
 script:
-- cargo build
-- cargo test
+- make build
+- make test
 cache:
   cargo: true
   apt: true
