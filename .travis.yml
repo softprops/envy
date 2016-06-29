@@ -35,7 +35,7 @@ after_success: |
   wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
   tar xzf master.tar.gz && mkdir kcov-master/build && cd kcov-master/build && cmake .. && make && make install DESTDIR=../tmp && cd ../.. &&
   ls target/debug &&
-  ./kcov-master/tmp/usr/local/bin/kcov --verify --coveralls-id=$TRAVIS_JOB_ID --exclude-pattern=/.cargo target/kcov serde-tests/target/debug/serde-tests-*
+  ./kcov-master/tmp/usr/local/bin/kcov --verify --coveralls-id=$TRAVIS_JOB_ID --exclude-pattern=/.cargo target/kcov serde-tests/target/debug/serde_tests-*
 env:
   global:
     secure: cCalpB4o2bCVi0um2nCiR+wKLLdSb1mnK+wbw18Rz9RoRJQv/wyE9qyxtrDdWjJIIhH4zZ0GozcKUC3dXTNC6n7akbnEWKhKJhOT7M3XUwPtNao1k5PuCwNHaJo+XUCRwjYAcUwIpap9YmnEybwz0WAp1xBaBe8OivittJQvf6m9xvld0UFBlYnfMxD4+1/4OOb6tQSf/7USsXU87FctZpYxeqGPv0I23Jye0LwU1glgkA1g12rU8+5iOOA/hMTG32FTilnsDXDeV0Sry5Zj75ihKw0IzdsPSeV07Fky+6/2uyyJCqCIpDY7hFztQ0f71213UbkKZOOMaEW0Z4x8mPRlXFFVNdSz70otdPq/xpr36X7B6+HQYqUVhDMSQ1vmw0qbhtYnottYEJbhDjdopfr0Sm1xRMXEn/8ehxKSElKMnneIed7GXXPl+C7lMDGioMDwCOoQl+X79AjbbcK6HTJLKegVofgEgpgGT5dukJVsGwar2d2uFMmZYWs5rTvo7n3jRJ+Sl06CAq7z8WCHQZkVmL6fIuILosT+RLCRjOnLF71XTaK02HFUfHa4j0UQFD2gyFKqGT4HlWi/3IC4hPNxQQvmnt823ORJdVNBYuUeMG0JPE/GgUqCrh8ATLAL79e2xCTkqekb1CQD90XlWt4yf/eC8e21tEb5blxMmWY=
