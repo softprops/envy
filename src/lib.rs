@@ -1,3 +1,5 @@
+//! envy is a library for deserializing env vars into typesafe structs 
+
 extern crate serde;
 
 use serde::de;
@@ -207,12 +209,14 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
     }
 }
 
+/// Deserializes a type based on information stored in env
 pub fn from_env<T>() -> Result<T>
     where T: de::Deserialize
 {
     from_iter(::std::env::vars())
 }
 
+/// Deserializes a type based on an iterable of `(String, String)`
 pub fn from_iter<Iter, T>(iter: Iter) -> Result<T>
     where T: de::Deserialize,
           Iter: Iterator<Item = (String, String)>
