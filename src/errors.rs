@@ -4,13 +4,13 @@ use serde::de;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Error {
-    MissingValue,
+    MissingValue(&'static str),
 }
 
 impl error::Error for Error {
     fn description(&self) -> &str {
         match *self {
-            Error::MissingValue => "missing value",
+            Error::MissingValue(_) => "missing value ",
         }
     }
 
@@ -24,7 +24,7 @@ impl error::Error for Error {
 impl fmt::Display for Error {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Error::MissingValue => write!(fmt, "missing value"),
+            Error::MissingValue(_) => write!(fmt, "missing value"),
         }
     }
 }
@@ -32,11 +32,11 @@ impl fmt::Display for Error {
 impl de::Error for Error {
     fn custom<T: Into<String>>(msg: T) -> Error {
         println!("custom err: {}", msg.into());
-        Error::MissingValue
+        Error::MissingValue("fixme")
     }
 
     fn end_of_stream() -> Error {
         println!("end of stream");
-        Error::MissingValue
+        Error::MissingValue("fixme")
     }
 }

@@ -32,6 +32,6 @@ fn fails_with_missing_value() {
     ];
     match envy::from_iter::<_, Foo>(data.into_iter()) {
         Ok(_) => panic!("expected failure"),
-        Err(e) => assert_eq!(e, envy::Error::MissingValue)
+        Err(e) => assert_eq!(e, envy::Error::MissingValue("doom"))
     }
 }

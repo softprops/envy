@@ -174,7 +174,7 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
                     _ => self.missing_field(field),
                 }
             }
-            _ => Err(Error::MissingValue),
+            _ => Err(Error::MissingValue("fixme")),
         }
     }
 
@@ -194,7 +194,7 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
                 where V: de::Visitor
             {
                 let &mut MissingFieldDeserializer(field) = self;
-                Err(Error::MissingValue)
+                Err(Error::MissingValue(field))
             }
 
             fn deserialize_option<V>(&mut self, mut visitor: V) -> Result<V::Value>
