@@ -22,6 +22,15 @@ struct SeqVisitor<'a> {
     values: Vec<String>,
 }
 
+impl<'a> SeqVisitor<'a> {
+    fn new(de: &'a mut Deserializer, values: Vec<String>) -> SeqVisitor<'a> {
+        SeqVisitor {
+            de: de,
+            values: values,
+        }
+    }
+}
+
 impl<'a> de::SeqVisitor for SeqVisitor<'a> {
     type Error = Error;
 
@@ -64,10 +73,7 @@ impl<'a> de::Deserializer for ValDeserializer<'a> {
     {
         let mut values = self.value.split(",").map(|v| v.to_string()).collect::<Vec<String>>();
         values.reverse();
-        visitor.visit_seq(SeqVisitor {
-            de: self.de,
-            values: values,
-        })
+        visitor.visit_seq(SeqVisitor::new(self.de, values))
     }
 
     fn deserialize_struct<V>(&mut self,
@@ -101,7 +107,7 @@ impl de::Deserializer for Deserializer {
     fn deserialize<V>(&mut self, mut visitor: V) -> Result<V::Value>
         where V: de::Visitor
     {
-        visitor.visit_map(MapVisitor { de: self })
+        visitor.visit_map(MapVisitor::new(self))
     }
 
     fn deserialize_struct<V>(&mut self,
@@ -127,6 +133,12 @@ impl de::Deserializer for Deserializer {
 /// visits env map
 struct MapVisitor<'a> {
     de: &'a mut Deserializer,
+}
+
+impl<'a> MapVisitor<'a> {
+    fn new(de: &'a mut Deserializer) -> MapVisitor<'a> {
+        MapVisitor { de: de }
+    }
 }
 
 impl<'a> de::MapVisitor for MapVisitor<'a> {
