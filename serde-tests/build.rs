@@ -7,8 +7,8 @@ use std::path::Path;
 pub fn main() {
     let out_dir = env::var_os("OUT_DIR").unwrap();
 
-    let src = Path::new("tests.rs.in");
-    let dst = Path::new(&out_dir).join("tests.rs");
+    let src = Path::new("test.rs.in");
+    let dst = Path::new(&out_dir).join("test.rs");
 
     serde_codegen::expand(&src, &dst).unwrap();
 }

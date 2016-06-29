@@ -2,5 +2,5 @@
 pub struct Foo {
     bar: String,
     baz: bool,
-    zoom: u16
+    zoom: Option<u16>
 }

@@ -30,18 +30,6 @@ impl Deserializer {
     }
 }
 
-pub fn from_env<T>() -> Result<T>
-    where T: de::Deserialize
-{
-    let mut vars = std::collections::HashMap::new();
-    for (k, v) in ::std::env::vars() {
-        vars.insert(k, v);
-    }
-    let mut deser = Deserializer::new(vars);
-    let value = try!(de::Deserialize::deserialize(&mut deser));
-    Ok(value)
-}
-
 impl de::Deserializer for Deserializer {
     type Error = Error;
     fn deserialize<V>(&mut self, mut visitor: V) -> Result<V::Value>
@@ -79,11 +67,12 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
     fn visit_key<K>(&mut self) -> Result<Option<K>>
         where K: de::Deserialize
     {
+        println!("visit key");
         match self.de.stack.pop() {
             Some(var) => {
                 self.de.stack.push(var.clone());
                 Ok(Some(try!(de::Deserialize::deserialize(&mut var.struct_field
-                            .into_deserializer()))))
+                    .into_deserializer()))))
             }
             _ => Ok(None),
         }
@@ -103,8 +92,57 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
     fn end(&mut self) -> Result<()> {
         Ok(())
     }
+
+
+    fn missing_field<V>(&mut self, field: &'static str) -> Result<V>
+        where V: de::Deserialize
+    {
+        println!("missing field!");
+        use std;
+
+        struct MissingFieldDeserializer(&'static str);
+
+        impl de::Deserializer for MissingFieldDeserializer {
+            type Error = Error;//de::value::Error;
+
+            fn deserialize<V>(&mut self, _visitor: V) -> Result<V::Value>
+                where V: de::Visitor
+            {
+                let &mut MissingFieldDeserializer(field) = self;
+                // Err(de::value::Error::MissingField(field))
+                Err(Error::MissingValue)
+            }
+
+            fn deserialize_option<V>(&mut self, mut visitor: V) -> Result<V::Value>
+                where V: de::Visitor
+            {
+                visitor.visit_none()
+            }
+        }
+
+        let mut de = MissingFieldDeserializer(field);
+        Ok(try!(de::Deserialize::deserialize(&mut de)))
+    }
 }
 
+pub fn from_env<T>() -> Result<T>
+    where T: de::Deserialize
+{
+    from_iter(::std::env::vars())
+}
+
+pub fn from_iter<Iter, T>(iter: Iter) -> Result<T>
+    where T: de::Deserialize,
+          Iter: Iterator<Item = (String, String)>
+{
+    let mut vars = HashMap::new();
+    for (k, v) in iter {
+        vars.insert(k, v);
+    }
+    let mut deser = Deserializer::new(vars);
+    let value = try!(de::Deserialize::deserialize(&mut deser));
+    Ok(value)
+}
 
 #[cfg(test)]
 mod tests {

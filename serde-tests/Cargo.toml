@@ -6,7 +6,7 @@ build = "build.rs"
 
 [dependencies]
 serde = "0.7"
-envy = { path = "..", features = ["serde"] }
+envy = { path = ".." }
 
 [build-dependencies]
 serde_codegen = "0.7"
