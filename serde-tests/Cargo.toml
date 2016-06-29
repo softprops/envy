@@ -1,0 +1,20 @@
+[package]
+name = "serde-tests"
+version = "0.1.0"
+authors = ["Doug Tangren <d.tangren@gmail.com>"]
+build = "build.rs"
+
+[dependencies]
+serde = "0.7"
+envy = { path = "..", features = ["serde"] }
+
+[build-dependencies]
+serde_codegen = "0.7"
+
+[lib]
+name = "serde_tests"
+path = "lib.rs"
+
+[[test]]
+name = "serde"
+path = "test.rs"

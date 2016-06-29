@@ -2,10 +2,7 @@
 name = "envy"
 version = "0.1.0"
 authors = ["softprops <d.tangren@gmail.com>"]
-build = "build.rs"
 
-[build-dependencies]
-serde_codegen = "*"
 
 [dependencies]
 serde = "*"
