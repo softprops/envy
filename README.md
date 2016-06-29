@@ -2,5 +2,6 @@
 
 > deserialize env vars into typesafe structs
 
+## [Documentation](https://softprops.github.io/envy)
 
 Doug Tangren (softprops) 2016
