@@ -1,20 +1,22 @@
 use std::fmt;
-use std::error;
-use serde::de;
+use std::error::Error as StdError;
+use serde::de::Error as SerdeError;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Error {
     MissingValue(&'static str),
+    Custom(String)
 }
 
-impl error::Error for Error {
+impl StdError for Error {
     fn description(&self) -> &str {
         match *self {
-            Error::MissingValue(_) => "missing value ",
+            Error::MissingValue(_) => "missing value",
+            Error::Custom(_) => "custom error"
         }
     }
 
-    fn cause(&self) -> Option<&error::Error> {
+    fn cause(&self) -> Option<&StdError> {
         match *self {
             _ => None,
         }
@@ -24,15 +26,19 @@ impl error::Error for Error {
 impl fmt::Display for Error {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Error::MissingValue(_) => write!(fmt, "missing value"),
+            Error::MissingValue(field) => write!(fmt, "missing value for field {}", field),
+            Error::Custom(ref msg) => write!(fmt, "{}", msg),
         }
     }
 }
 
-impl de::Error for Error {
+impl SerdeError for Error {
     fn custom<T: Into<String>>(msg: T) -> Error {
-        println!("custom err: {}", msg.into());
-        Error::MissingValue("fixme")
+        Error::Custom(msg.into())
+    }
+
+    fn missing_field(field: &'static str) -> Error {
+        Error::MissingValue(field)
     }
 
     fn end_of_stream() -> Error {
