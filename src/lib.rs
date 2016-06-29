@@ -1,4 +1,4 @@
-//! envy is a library for deserializing env vars into typesafe structs 
+//! envy is a library for deserializing env vars into typesafe structs
 
 extern crate serde;
 
