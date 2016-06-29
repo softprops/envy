@@ -2,6 +2,12 @@
 name = "envy"
 version = "0.1.0"
 authors = ["softprops <d.tangren@gmail.com>"]
+description = "deserialize env vars into typesafe structs"
+documentation = "https://softprops.github.io/envy"
+homepage = "https://github.com/softprops/envy"
+repository = "https://github.com/softprops/envy"
+keywords = ["serde", "env"]
+license = "MIT"
 
 [dependencies]
 serde = "0.7"
