@@ -12,10 +12,76 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Clone, Debug)]
 struct Var {
     key: String,
-    struct_field: String,
+    struct_field: &'static str,
     value: Option<String>,
 }
 
+/// visits literal vec of strings
+struct SeqVisitor<'a> {
+    de: &'a mut Deserializer,
+    values: Vec<String>,
+}
+
+impl<'a> de::SeqVisitor for SeqVisitor<'a> {
+    type Error = Error;
+
+    fn visit<T>(&mut self) -> Result<Option<T>>
+        where T: de::Deserialize
+    {
+        match self.values.pop() {
+            Some(val) => {
+                let mut de = ValDeserializer {
+                    de: self.de,
+                    value: val.clone(),
+                };
+                Ok(Some(try!(de::Deserialize::deserialize(&mut de))))
+            }
+            _ => Ok(None),
+        }
+    }
+
+    fn end(&mut self) -> Result<()> {
+        Ok(())
+    }
+}
+
+/// deserializes a single env string value
+struct ValDeserializer<'a> {
+    de: &'a mut Deserializer,
+    value: String,
+}
+
+impl<'a> de::Deserializer for ValDeserializer<'a> {
+    type Error = Error;
+    fn deserialize<V>(&mut self, mut visitor: V) -> Result<V::Value>
+        where V: de::Visitor
+    {
+        visitor.visit_string(self.value.clone())
+    }
+
+    fn deserialize_seq<V>(&mut self, mut visitor: V) -> Result<V::Value>
+        where V: de::Visitor
+    {
+        let mut values = self.value.split(",").map(|v| v.to_string()).collect::<Vec<String>>();
+        values.reverse();
+        visitor.visit_seq(SeqVisitor {
+            de: self.de,
+            values: values,
+        })
+    }
+
+    fn deserialize_struct<V>(&mut self,
+                             _name: &'static str,
+                             _fields: &'static [&'static str],
+                             visitor: V)
+                             -> Result<V::Value>
+        where V: de::Visitor
+    {
+        self.de.deserialize_struct(_name, _fields, visitor)
+    }
+}
+
+/// deserializer for env vars
 struct Deserializer {
     vars: HashMap<String, String>,
     stack: Vec<Var>,
@@ -50,7 +116,7 @@ impl de::Deserializer for Deserializer {
             let value = self.vars.get(&key).map(|v| v.clone());
             self.stack.push(Var {
                 key: key,
-                struct_field: f.to_string(),
+                struct_field: f,
                 value: value,
             })
         }
@@ -58,6 +124,7 @@ impl de::Deserializer for Deserializer {
     }
 }
 
+/// visits env map
 struct MapVisitor<'a> {
     de: &'a mut Deserializer,
 }
@@ -67,7 +134,6 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
     fn visit_key<K>(&mut self) -> Result<Option<K>>
         where K: de::Deserialize
     {
-        println!("visit key");
         match self.de.stack.pop() {
             Some(var) => {
                 self.de.stack.push(var.clone());
@@ -82,8 +148,17 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
         where V: de::Deserialize
     {
         match self.de.stack.pop() {
-            Some(Var { value: Some(val), .. }) => {
-                Ok(try!(de::Deserialize::deserialize(&mut val.into_deserializer())))
+            Some(Var { value: val, struct_field: field, .. }) => {
+                match val {
+                    Some(resolved) => {
+                        let mut de = ValDeserializer {
+                            de: self.de,
+                            value: resolved,
+                        };
+                        Ok(try!(de::Deserialize::deserialize(&mut de)))
+                    }
+                    _ => self.missing_field(field),
+                }
             }
             _ => Err(Error::MissingValue),
         }
@@ -93,13 +168,9 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
         Ok(())
     }
 
-
     fn missing_field<V>(&mut self, field: &'static str) -> Result<V>
         where V: de::Deserialize
     {
-        println!("missing field!");
-        use std;
-
         struct MissingFieldDeserializer(&'static str);
 
         impl de::Deserializer for MissingFieldDeserializer {
@@ -109,7 +180,6 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
                 where V: de::Visitor
             {
                 let &mut MissingFieldDeserializer(field) = self;
-                // Err(de::value::Error::MissingField(field))
                 Err(Error::MissingValue)
             }
 
