@@ -18,6 +18,12 @@ struct Var {
     value: Option<String>,
 }
 
+impl Var {
+    fn env_name(struct_field: &'static str) -> String {
+        struct_field.to_string().to_uppercase()
+    }
+}
+
 /// visits literal vec of strings
 struct SeqVisitor<'a> {
     de: &'a mut Deserializer,
@@ -120,7 +126,7 @@ impl de::Deserializer for Deserializer {
         where V: de::Visitor
     {
         for f in _fields {
-            let key = f.to_string().to_uppercase();
+            let key = Var::env_name(f);
             let value = self.vars.get(&key).map(|v| v.clone());
             self.stack.push(Var {
                 key: key,
