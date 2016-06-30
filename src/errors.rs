@@ -42,7 +42,6 @@ impl SerdeError for Error {
     }
 
     fn end_of_stream() -> Error {
-        println!("end of stream");
-        Error::MissingValue("fixme")
+        unreachable!()
     }
 }
