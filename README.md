@@ -4,14 +4,13 @@
 
 ## [Documentation](https://softprops.github.io/envy)
 
-
 ## usage
 
 assuming you're rust program looks something like this
 
 
-
 ```rust
+// extern crate serde and other imports...
 extern crate envy;
 
 use std::env;
@@ -32,11 +31,13 @@ fn main() {
 }
 ```
 
+export some environment variables
+
 ```bash
 FOO=8080 BAR=true BAZ=hello yourapp
 ```
 
-you should be able to access an completely typesafe config struct deserialized from env vars
+You should be able to access a completely typesafe config struct deserialized from env vars
 
 
 
