@@ -19,8 +19,14 @@ struct Var {
 }
 
 impl Var {
-    fn env_name(struct_field: &'static str) -> String {
-        struct_field.to_string().to_uppercase()
+    fn new(struct_field: &'static str, vars: &HashMap<String, String>) -> Var {
+        let key = struct_field.to_string().to_uppercase();
+        let value = vars.get(&key).map(|v| v.clone());
+        Var {
+            key: key,
+            struct_field: struct_field,
+            value: value,
+        }
     }
 }
 
@@ -126,13 +132,7 @@ impl de::Deserializer for Deserializer {
         where V: de::Visitor
     {
         for f in _fields {
-            let key = Var::env_name(f);
-            let value = self.vars.get(&key).map(|v| v.clone());
-            self.stack.push(Var {
-                key: key,
-                struct_field: f,
-                value: value,
-            })
+            self.stack.push(Var::new(f, &self.vars))
         }
         self.deserialize_map(visitor)
     }
