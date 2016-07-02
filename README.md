@@ -39,6 +39,9 @@ FOO=8080 BAR=true BAZ=hello yourapp
 
 You should be able to access a completely typesafe config struct deserialized from env vars
 
+structs with option types will successfully be deserialized when its associated env var is absent.
+
+envy also supports deserializing vecs from comma separated env var values.
 
 
 Doug Tangren (softprops) 2016
