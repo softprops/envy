@@ -238,6 +238,13 @@ pub fn from_iter<Iter, T>(iter: Iter) -> Result<T>
 
 #[cfg(test)]
 mod tests {
+    use super::Var;
+    use std::collections::HashMap;
     #[test]
-    fn it_works() {}
+    fn var_name_format() {
+        let mut vars = HashMap::new();
+        vars.insert(String::from("FOO_BAR"), String::from("BAR"));
+        let var = Var::new("foo_bar", &vars);
+        assert_eq!(var.key, String::from("FOO_BAR"))
+    }
 }
