@@ -9,6 +9,7 @@ use serde::de::value::ValueDeserializer;
 mod errors;
 pub use errors::Error;
 
+/// A type result type specific to `envy::Errors`
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Clone, Debug)]

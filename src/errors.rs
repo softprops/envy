@@ -2,6 +2,8 @@ use std::fmt;
 use std::error::Error as StdError;
 use serde::de::Error as SerdeError;
 
+/// Types of errors that may result from failed attempts
+/// to deserialize a type from env vars
 #[derive(Debug, Clone, PartialEq)]
 pub enum Error {
     MissingValue(&'static str),
