@@ -1,3 +1,3 @@
-0.1.0 (unreleased)
+# 0.1.0 (2016-07-02)
 
 * initial release
