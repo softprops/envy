@@ -39,7 +39,7 @@ $ FOO=8080 BAR=true BAZ=hello yourapp
 
 You should be able to access a completely typesafe config struct deserialized from env vars.
 
-Envy assumes env assumes an env var exists for each struct field with a matching name in all uppercase letters. i.e. A struct field `foo_bar` would map to an env var named `FOO_BAR`
+Envy assumes an env var exists for each struct field with a matching name in all uppercase letters. i.e. A struct field `foo_bar` would map to an env var named `FOO_BAR`
 
 Structs with `Option` type fields will successfully be deserialized when their associated env var is absent.
 
