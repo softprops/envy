@@ -181,12 +181,10 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
                         };
                         Ok(try!(de::Deserialize::deserialize(&mut de)))
                     }
-                    _ => {
-                        self.missing_field(field)
-                    }
+                    _ => self.missing_field(field),
                 }
             }
-            _ => Err(Error::MissingValue("fixme")),
+            _ => unreachable!(),
         }
     }
 

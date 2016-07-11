@@ -5,5 +5,7 @@ pub struct Foo {
     zoom: Option<u16>,
     doom: Vec<u64>,
     #[serde(default="default_kaboom")]
-    kaboom: u16
+    kaboom: u16,
+    #[serde(default)]
+    debug_mode: bool
 }

@@ -21,7 +21,8 @@ fn deserialize_from_iter() {
                         baz: true,
                         zoom: None,
                         doom: vec![1,2,3],
-                        kaboom: 8080
+                        kaboom: 8080,
+                        debug_mode: false
                     }
             )
         },
