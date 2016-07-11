@@ -44,7 +44,7 @@ Structs with `Option` type fields will successfully be deserialized when their a
 
 Envy also supports deserializing `Vecs` from comma separated env var values.
 
-Because envy is build on top of serde, you take use all of serdes [annotations](https://github.com/serde-rs/serde#annotations) to your advantage
+Because envy is built on top of serde, you take use all of serde's [annotations](https://github.com/serde-rs/serde#annotations) to your advantage
 
 For instance let's say you're app requires a field but would like a sensible default when one is not provided.
 ```rust
