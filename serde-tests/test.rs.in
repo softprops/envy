@@ -3,5 +3,7 @@ pub struct Foo {
     bar: String,
     baz: bool,
     zoom: Option<u16>,
-    doom: Vec<u64>
+    doom: Vec<u64>,
+    #[serde(default="default_kaboom")]
+    kaboom: u16
 }

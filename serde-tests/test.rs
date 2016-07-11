@@ -1,5 +1,9 @@
 extern crate envy;
 
+pub fn default_kaboom() -> u16 {
+    8080
+}
+
 include!(concat!(env!("OUT_DIR"), "/test.rs"));
 
 #[test]
@@ -16,7 +20,8 @@ fn deserialize_from_iter() {
                         bar: String::from("test"),
                         baz: true,
                         zoom: None,
-                        doom: vec![1,2,3]
+                        doom: vec![1,2,3],
+                        kaboom: 8080
                     }
             )
         },
