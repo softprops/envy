@@ -182,7 +182,6 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
                         Ok(try!(de::Deserialize::deserialize(&mut de)))
                     }
                     _ => {
-                        println!("self inflicted missing field");
                         self.missing_field(field)
                     }
                 }
