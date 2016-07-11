@@ -1,6 +1,6 @@
 [package]
 name = "envy"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["softprops <d.tangren@gmail.com>"]
 description = "deserialize env vars into typesafe structs"
 documentation = "https://softprops.github.io/envy"
