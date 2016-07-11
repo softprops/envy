@@ -6,8 +6,7 @@
 
 ## usage
 
-assuming you're rust program looks something like this
-
+assuming your rust program looks something like this.
 
 ```rust
 // extern crate serde and other imports...
@@ -44,6 +43,39 @@ Envy assumes an env var exists for each struct field with a matching name in all
 Structs with `Option` type fields will successfully be deserialized when their associated env var is absent.
 
 Envy also supports deserializing `Vecs` from comma separated env var values.
+
+Because envy is build on top of serde, you take use all of serdes [annotations](https://github.com/serde-rs/serde#annotations) to your advantage
+
+For instance let's say you're app requires a field but would like a sensible default when one is not provided.
+```rust
+
+/// provides default value for zoom if ZOOM env var is not set
+fn default_zoom() -> {
+  32
+}
+
+#[derive(Deserialize, Debug)]
+struct Config {
+  foo: u16,
+  bar: bool,
+  baz: String,
+  boom: Option<u64>,
+  #[serde(default="default_zoom")]
+  zoom: u16
+}
+```
+
+The following will yield an application configured with a zoom of 32
+
+```bash
+$ FOO=8080 BAR=true BAZ=hello yourapp
+```
+
+The following will yield an application configured with a zoom of 10
+
+```bash
+$ FOO=8080 BAR=true BAZ=hello ZOOM=10 yourapp
+```
 
 ## potential areas of improvement
 

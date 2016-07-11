@@ -133,7 +133,10 @@ impl de::Deserializer for Deserializer {
         where V: de::Visitor
     {
         for f in _fields {
-            self.stack.push(Var::new(f, &self.vars))
+            let var = Var::new(f, &self.vars);
+            if var.value.is_some() {
+                self.stack.push(var)
+            }
         }
         self.deserialize_map(visitor)
     }
@@ -181,7 +184,7 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
                     _ => self.missing_field(field),
                 }
             }
-            _ => Err(Error::MissingValue("fixme")),
+            _ => unreachable!(),
         }
     }
 

@@ -7,14 +7,14 @@ use serde::de::Error as SerdeError;
 #[derive(Debug, Clone, PartialEq)]
 pub enum Error {
     MissingValue(&'static str),
-    Custom(String)
+    Custom(String),
 }
 
 impl StdError for Error {
     fn description(&self) -> &str {
         match *self {
             Error::MissingValue(_) => "missing value",
-            Error::Custom(_) => "custom error"
+            Error::Custom(_) => "custom error",
         }
     }
 
