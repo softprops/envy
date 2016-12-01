@@ -5,11 +5,11 @@ authors = ["Doug Tangren <d.tangren@gmail.com>"]
 build = "build.rs"
 
 [dependencies]
-serde = "0.7"
+serde = "0.8"
 envy = { path = ".." }
 
 [build-dependencies]
-serde_codegen = "0.7"
+serde_codegen = "0.8"
 
 [lib]
 name = "serde_tests"
