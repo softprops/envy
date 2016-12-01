@@ -1,5 +1,5 @@
 //! envy is a library for deserializing env vars into typesafe structs
-
+#[macro_use]
 extern crate serde;
 
 use serde::de;
@@ -100,6 +100,38 @@ impl<'a> de::Deserializer for ValDeserializer<'a> {
     {
         self.de.deserialize_struct(_name, _fields, visitor)
     }
+
+
+    forward_to_deserialize! {
+        bool
+        usize
+        u8
+        u16
+        u32
+        u64
+        isize
+        i8
+        i16
+        i32
+        i64
+        f32
+        f64
+        char
+        str
+        seq_fixed_size
+        map
+        string
+        unit
+        option
+        bytes
+        unit_struct
+        newtype_struct
+        tuple_struct
+        struct_field
+        tuple
+        enum
+        ignored_any
+    }
 }
 
 /// deserializer for env vars
@@ -139,6 +171,38 @@ impl de::Deserializer for Deserializer {
             }
         }
         self.deserialize_map(visitor)
+    }
+
+    forward_to_deserialize! {
+        bool
+        usize
+        u8
+        u16
+        u32
+        u64
+        isize
+        i8
+        i16
+        i32
+        i64
+        f32
+        f64
+        char
+        str
+        string
+        unit
+        option
+        bytes
+        unit_struct
+        newtype_struct
+        tuple_struct
+        seq_fixed_size
+        seq
+        map
+        struct_field
+        tuple
+        enum
+        ignored_any
     }
 }
 
@@ -211,6 +275,38 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
                 where V: de::Visitor
             {
                 visitor.visit_none()
+            }
+
+            forward_to_deserialize! {
+                bool
+                usize
+                u8
+                u16
+                u32
+                u64
+                isize
+                i8
+                i16
+                i32
+                i64
+                f32
+                f64
+                char
+                str
+                string
+                unit
+                bytes
+                unit_struct
+                newtype_struct
+                tuple_struct
+                struct
+                struct_field
+                tuple
+                enum
+                ignored_any
+                seq_fixed_size
+                seq
+                map
             }
         }
 
