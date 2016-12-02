@@ -23,7 +23,7 @@ struct Config {
 }
 
 fn main() {
-    match envy::from_env::<Config>(env::vars()) {
+    match envy::from_env::<Config>() {
        Ok(config) => println!("{:#?}", config)
        Err(error) => panic!("{:#?}", error)
     }
