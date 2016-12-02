@@ -6,6 +6,8 @@ matrix:
   - rust: nightly
   - rust: beta
   - rust: stable
+  allow_failures:
+  - rust: nightly
 script:
 - make build
 - make test
