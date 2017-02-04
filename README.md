@@ -4,12 +4,22 @@
 
 ## [Documentation](https://softprops.github.io/envy)
 
+## install
+
+Add the following to your Cargo.toml fails_with_invalid_type
+
+```toml
+[dependencies]
+envy = "0.2"
+```
+
 ## usage
 
 assuming your rust program looks something like this.
 
 ```rust
-// extern crate serde and other imports...
+#[macro_use]
+extern crate serde_derive;
 extern crate envy;
 
 use std::env;
