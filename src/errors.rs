@@ -35,15 +35,15 @@ impl fmt::Display for Error {
 }
 
 impl SerdeError for Error {
-    fn custom<T: Into<String>>(msg: T) -> Error {
-        Error::Custom(msg.into())
+    fn custom<T: ::std::fmt::Display>(msg: T) -> Self {
+        Error::Custom(format!("{}", msg))
     }
 
     fn missing_field(field: &'static str) -> Error {
         Error::MissingValue(field)
     }
 
-    fn end_of_stream() -> Error {
+    /*fn end_of_stream() -> Error {
         unreachable!()
-    }
+    }*/
 }
