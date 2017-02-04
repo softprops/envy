@@ -2,14 +2,11 @@
 name = "serde-tests"
 version = "0.1.0"
 authors = ["Doug Tangren <d.tangren@gmail.com>"]
-build = "build.rs"
 
 [dependencies]
-serde = "0.8"
+serde = "0.9"
+serde_derive = "0.9"
 envy = { path = ".." }
-
-[build-dependencies]
-serde_codegen = "0.8"
 
 [lib]
 name = "serde_tests"

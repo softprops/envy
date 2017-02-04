@@ -1,4 +1,8 @@
-# 01.2
+# 0.2.0
+
+* upgrade to the latest serde (0.9)
+
+# 0.1.2
 
 * upgrade to latest serde (0.8)
 

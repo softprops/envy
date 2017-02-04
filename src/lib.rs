@@ -12,6 +12,7 @@ pub use errors::Error;
 /// A type result type specific to `envy::Errors`
 pub type Result<T> = std::result::Result<T, Error>;
 
+/// an env var key, struct_field name, and value if one exists
 #[derive(Clone, Debug)]
 struct Var {
     key: String,
@@ -49,8 +50,8 @@ impl<'a> SeqVisitor<'a> {
 impl<'a> de::SeqVisitor for SeqVisitor<'a> {
     type Error = Error;
 
-    fn visit<T>(&mut self) -> Result<Option<T>>
-        where T: de::Deserialize
+    fn visit_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>>
+        where T: de::DeserializeSeed
     {
         match self.values.pop() {
             Some(val) => {
@@ -58,32 +59,30 @@ impl<'a> de::SeqVisitor for SeqVisitor<'a> {
                     de: self.de,
                     value: val.clone(),
                 };
-                Ok(Some(try!(de::Deserialize::deserialize(&mut de))))
+                seed.deserialize(&mut de).map(Some)
             }
             _ => Ok(None),
         }
     }
-
-    fn end(&mut self) -> Result<()> {
-        Ok(())
-    }
 }
 
 /// deserializes a single env string value
+/// if the intent to deserialize a seq, we split the string by
+// comma an deserialize the resolving values separately
 struct ValDeserializer<'a> {
     de: &'a mut Deserializer,
     value: String,
 }
 
-impl<'a> de::Deserializer for ValDeserializer<'a> {
+impl<'a, 'r> de::Deserializer for &'r mut ValDeserializer<'a> {
     type Error = Error;
-    fn deserialize<V>(&mut self, mut visitor: V) -> Result<V::Value>
+    fn deserialize<V>(self, visitor: V) -> Result<V::Value>
         where V: de::Visitor
     {
         visitor.visit_string(self.value.clone())
     }
 
-    fn deserialize_seq<V>(&mut self, mut visitor: V) -> Result<V::Value>
+    fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value>
         where V: de::Visitor
     {
         let mut values = self.value.split(",").map(|v| v.to_string()).collect::<Vec<String>>();
@@ -91,7 +90,7 @@ impl<'a> de::Deserializer for ValDeserializer<'a> {
         visitor.visit_seq(SeqVisitor::new(self.de, values))
     }
 
-    fn deserialize_struct<V>(&mut self,
+    fn deserialize_struct<V>(self,
                              _name: &'static str,
                              _fields: &'static [&'static str],
                              visitor: V)
@@ -101,40 +100,14 @@ impl<'a> de::Deserializer for ValDeserializer<'a> {
         self.de.deserialize_struct(_name, _fields, visitor)
     }
 
-
     forward_to_deserialize! {
-        bool
-        usize
-        u8
-        u16
-        u32
-        u64
-        isize
-        i8
-        i16
-        i32
-        i64
-        f32
-        f64
-        char
-        str
-        seq_fixed_size
-        map
-        string
-        unit
-        option
-        bytes
-        unit_struct
-        newtype_struct
-        tuple_struct
-        struct_field
-        tuple
-        enum
-        ignored_any
+        bool u8 u16 u32 u64 i8 i16 i32 i64 f32 f64 char str string unit
+        seq_fixed_size bytes byte_buf map unit_struct tuple_struct
+        struct_field tuple ignored_any option newtype_struct enum
     }
 }
 
-/// deserializer for env vars
+/// A deserializer for env vars
 struct Deserializer {
     vars: HashMap<String, String>,
     stack: Vec<Var>,
@@ -149,15 +122,15 @@ impl Deserializer {
     }
 }
 
-impl de::Deserializer for Deserializer {
+impl <'r> de::Deserializer for  &'r mut Deserializer {
     type Error = Error;
-    fn deserialize<V>(&mut self, mut visitor: V) -> Result<V::Value>
+    fn deserialize<V>(self, visitor: V) -> Result<V::Value>
         where V: de::Visitor
     {
         visitor.visit_map(MapVisitor::new(self))
     }
 
-    fn deserialize_struct<V>(&mut self,
+    fn deserialize_struct<V>(self,
                              _name: &'static str,
                              _fields: &'static [&'static str],
                              visitor: V)
@@ -174,35 +147,9 @@ impl de::Deserializer for Deserializer {
     }
 
     forward_to_deserialize! {
-        bool
-        usize
-        u8
-        u16
-        u32
-        u64
-        isize
-        i8
-        i16
-        i32
-        i64
-        f32
-        f64
-        char
-        str
-        string
-        unit
-        option
-        bytes
-        unit_struct
-        newtype_struct
-        tuple_struct
-        seq_fixed_size
-        seq
-        map
-        struct_field
-        tuple
-        enum
-        ignored_any
+        bool u8 u16 u32 u64 i8 i16 i32 i64 f32 f64 char str string unit seq
+        seq_fixed_size bytes byte_buf map unit_struct tuple_struct
+        struct_field tuple ignored_any option newtype_struct enum
     }
 }
 
@@ -219,21 +166,24 @@ impl<'a> MapVisitor<'a> {
 
 impl<'a> de::MapVisitor for MapVisitor<'a> {
     type Error = Error;
-    fn visit_key<K>(&mut self) -> Result<Option<K>>
-        where K: de::Deserialize
+
+    fn visit_key_seed<K>(&mut self, seed: K) -> Result<Option<K::Value>>
+        where K: de::DeserializeSeed
     {
         match self.de.stack.pop() {
             Some(var) => {
+                // we have a var!...
                 self.de.stack.push(var.clone());
-                Ok(Some(try!(de::Deserialize::deserialize(&mut var.struct_field
-                    .into_deserializer()))))
+                seed.deserialize(var.struct_field.into_deserializer()).map(Some)
+                //Ok(Some(try!(de::Deserialize::deserialize(&mut var.struct_field
+                //    .into_deserializer()))))
             }
             _ => Ok(None),
         }
     }
 
-    fn visit_value<V>(&mut self) -> Result<V>
-        where V: de::Deserialize
+    fn visit_value_seed<V>(&mut self, seed: V) -> Result<V::Value>
+        where V: de::DeserializeSeed
     {
         match self.de.stack.pop() {
             Some(Var { value: val, struct_field: field, .. }) => {
@@ -243,75 +193,13 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
                             de: self.de,
                             value: resolved,
                         };
-                        Ok(try!(de::Deserialize::deserialize(&mut de)))
+                        seed.deserialize(&mut de)
                     }
-                    _ => self.missing_field(field),
+                    _ => Err(Error::MissingValue(field))
                 }
             }
             _ => unreachable!(),
         }
-    }
-
-    fn end(&mut self) -> Result<()> {
-        Ok(())
-    }
-
-    fn missing_field<V>(&mut self, field: &'static str) -> Result<V>
-        where V: de::Deserialize
-    {
-        struct MissingFieldDeserializer(&'static str);
-
-        impl de::Deserializer for MissingFieldDeserializer {
-            type Error = Error;//de::value::Error;
-
-            fn deserialize<V>(&mut self, _visitor: V) -> Result<V::Value>
-                where V: de::Visitor
-            {
-                let &mut MissingFieldDeserializer(field) = self;
-                Err(Error::MissingValue(field))
-            }
-
-            fn deserialize_option<V>(&mut self, mut visitor: V) -> Result<V::Value>
-                where V: de::Visitor
-            {
-                visitor.visit_none()
-            }
-
-            forward_to_deserialize! {
-                bool
-                usize
-                u8
-                u16
-                u32
-                u64
-                isize
-                i8
-                i16
-                i32
-                i64
-                f32
-                f64
-                char
-                str
-                string
-                unit
-                bytes
-                unit_struct
-                newtype_struct
-                tuple_struct
-                struct
-                struct_field
-                tuple
-                enum
-                ignored_any
-                seq_fixed_size
-                seq
-                map
-            }
-        }
-
-        let mut de = MissingFieldDeserializer(field);
-        Ok(try!(de::Deserialize::deserialize(&mut de)))
     }
 }
 

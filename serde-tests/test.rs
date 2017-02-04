@@ -1,10 +1,23 @@
+#[macro_use]
+extern crate serde_derive;
+
 extern crate envy;
 
 pub fn default_kaboom() -> u16 {
     8080
 }
 
-include!(concat!(env!("OUT_DIR"), "/test.rs"));
+#[derive(Deserialize, Debug, PartialEq)]
+pub struct Foo {
+    bar: String,
+    baz: bool,
+    zoom: Option<u16>,
+    doom: Vec<u64>,
+    #[serde(default="default_kaboom")]
+    kaboom: u16,
+    #[serde(default)]
+    debug_mode: bool
+}
 
 #[test]
 fn deserialize_from_iter() {
@@ -51,6 +64,6 @@ fn fails_with_invalid_type() {
     ];
     match envy::from_iter::<_, Foo>(data.into_iter()) {
         Ok(_) => panic!("expected failure"),
-        Err(e) => assert_eq!(e, envy::Error::Custom(String::from("Invalid type. Expected `Bool`")))
+        Err(e) => assert_eq!(e, envy::Error::Custom(String::from("invalid type: string \"notabool\", expected a boolean")))
     }
 }
