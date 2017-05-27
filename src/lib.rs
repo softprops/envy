@@ -2,9 +2,9 @@
 #[macro_use]
 extern crate serde;
 
-use serde::de;
+use serde::de::{self, IntoDeserializer};
 use std::collections::HashMap;
-use serde::de::value::ValueDeserializer;
+//use serde::de::value::ValueDeserializer;
 
 mod errors;
 pub use errors::Error;
@@ -47,11 +47,11 @@ impl<'a> SeqVisitor<'a> {
     }
 }
 
-impl<'a> de::SeqVisitor for SeqVisitor<'a> {
+impl<'de, 'a> de::SeqAccess<'de> for SeqVisitor<'a> {
     type Error = Error;
 
-    fn visit_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>>
-        where T: de::DeserializeSeed
+    fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>>
+        where T: de::DeserializeSeed<'de>
     {
         match self.values.pop() {
             Some(val) => {
@@ -74,18 +74,21 @@ struct ValDeserializer<'a> {
     value: String,
 }
 
-impl<'a, 'r> de::Deserializer for &'r mut ValDeserializer<'a> {
+impl<'de, 'a, 'r> de::Deserializer<'de> for &'r mut ValDeserializer<'a> {
     type Error = Error;
-    fn deserialize<V>(self, visitor: V) -> Result<V::Value>
-        where V: de::Visitor
+    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
+        where V: de::Visitor<'de>
     {
         visitor.visit_string(self.value.clone())
     }
 
     fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value>
-        where V: de::Visitor
+        where V: de::Visitor<'de>
     {
-        let mut values = self.value.split(",").map(|v| v.to_string()).collect::<Vec<String>>();
+        let mut values = self.value
+            .split(",")
+            .map(|v| v.to_string())
+            .collect::<Vec<String>>();
         values.reverse();
         visitor.visit_seq(SeqVisitor::new(self.de, values))
     }
@@ -95,15 +98,15 @@ impl<'a, 'r> de::Deserializer for &'r mut ValDeserializer<'a> {
                              _fields: &'static [&'static str],
                              visitor: V)
                              -> Result<V::Value>
-        where V: de::Visitor
+        where V: de::Visitor<'de>
     {
         self.de.deserialize_struct(_name, _fields, visitor)
     }
 
-    forward_to_deserialize! {
+    forward_to_deserialize_any! {
         bool u8 u16 u32 u64 i8 i16 i32 i64 f32 f64 char str string unit
-        seq_fixed_size bytes byte_buf map unit_struct tuple_struct
-        struct_field tuple ignored_any option newtype_struct enum
+        bytes byte_buf map unit_struct tuple_struct
+        identifier tuple ignored_any option newtype_struct enum
     }
 }
 
@@ -122,10 +125,10 @@ impl Deserializer {
     }
 }
 
-impl <'r> de::Deserializer for  &'r mut Deserializer {
+impl<'de, 'r> de::Deserializer<'de> for &'r mut Deserializer {
     type Error = Error;
-    fn deserialize<V>(self, visitor: V) -> Result<V::Value>
-        where V: de::Visitor
+    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
+        where V: de::Visitor<'de>
     {
         visitor.visit_map(MapVisitor::new(self))
     }
@@ -135,7 +138,7 @@ impl <'r> de::Deserializer for  &'r mut Deserializer {
                              _fields: &'static [&'static str],
                              visitor: V)
                              -> Result<V::Value>
-        where V: de::Visitor
+        where V: de::Visitor<'de>
     {
         for f in _fields {
             let var = Var::new(f, &self.vars);
@@ -146,10 +149,10 @@ impl <'r> de::Deserializer for  &'r mut Deserializer {
         self.deserialize_map(visitor)
     }
 
-    forward_to_deserialize! {
+    forward_to_deserialize_any! {
         bool u8 u16 u32 u64 i8 i16 i32 i64 f32 f64 char str string unit seq
-        seq_fixed_size bytes byte_buf map unit_struct tuple_struct
-        struct_field tuple ignored_any option newtype_struct enum
+        bytes byte_buf map unit_struct tuple_struct
+        identifier tuple ignored_any option newtype_struct enum
     }
 }
 
@@ -164,17 +167,18 @@ impl<'a> MapVisitor<'a> {
     }
 }
 
-impl<'a> de::MapVisitor for MapVisitor<'a> {
+impl<'de, 'a> de::MapAccess<'de> for MapVisitor<'a> {
     type Error = Error;
 
-    fn visit_key_seed<K>(&mut self, seed: K) -> Result<Option<K::Value>>
-        where K: de::DeserializeSeed
+    fn next_key_seed<K>(&mut self, seed: K) -> Result<Option<K::Value>>
+        where K: de::DeserializeSeed<'de>
     {
         match self.de.stack.pop() {
             Some(var) => {
                 // we have a var!...
                 self.de.stack.push(var.clone());
-                seed.deserialize(var.struct_field.into_deserializer()).map(Some)
+                seed.deserialize(var.struct_field.into_deserializer())
+                    .map(Some)
                 //Ok(Some(try!(de::Deserialize::deserialize(&mut var.struct_field
                 //    .into_deserializer()))))
             }
@@ -182,11 +186,15 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
         }
     }
 
-    fn visit_value_seed<V>(&mut self, seed: V) -> Result<V::Value>
-        where V: de::DeserializeSeed
+    fn next_value_seed<V>(&mut self, seed: V) -> Result<V::Value>
+        where V: de::DeserializeSeed<'de>
     {
         match self.de.stack.pop() {
-            Some(Var { value: val, struct_field: field, .. }) => {
+            Some(Var {
+                     value: val,
+                     struct_field: field,
+                     ..
+                 }) => {
                 match val {
                     Some(resolved) => {
                         let mut de = ValDeserializer {
@@ -195,7 +203,7 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
                         };
                         seed.deserialize(&mut de)
                     }
-                    _ => Err(Error::MissingValue(field))
+                    _ => Err(Error::MissingValue(field)),
                 }
             }
             _ => unreachable!(),
@@ -205,14 +213,14 @@ impl<'a> de::MapVisitor for MapVisitor<'a> {
 
 /// Deserializes a type based on information stored in env
 pub fn from_env<T>() -> Result<T>
-    where T: de::Deserialize
+    where T: de::DeserializeOwned
 {
     from_iter(::std::env::vars())
 }
 
 /// Deserializes a type based on an iterable of `(String, String)`
 pub fn from_iter<Iter, T>(iter: Iter) -> Result<T>
-    where T: de::Deserialize,
+    where T: de::DeserializeOwned,
           Iter: Iterator<Item = (String, String)>
 {
     let mut vars = HashMap::new();
