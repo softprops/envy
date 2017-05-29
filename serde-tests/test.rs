@@ -3,6 +3,21 @@ extern crate serde_derive;
 
 extern crate envy;
 
+#[derive(Deserialize, Debug, PartialEq)]
+#[serde(untagged)]
+ #[serde(field_identifier, rename_all = "lowercase")]
+pub enum Size {
+    Small,
+    Medium,
+    Large
+}
+
+impl Default for Size {
+    fn default() -> Size {
+        Size::Medium
+    }
+}
+
 pub fn default_kaboom() -> u16 {
     8080
 }
@@ -16,7 +31,9 @@ pub struct Foo {
     #[serde(default="default_kaboom")]
     kaboom: u16,
     #[serde(default)]
-    debug_mode: bool
+    debug_mode: bool,
+    #[serde(default)]
+    size: Size
 }
 
 #[test]
@@ -24,7 +41,8 @@ fn deserialize_from_iter() {
     let data = vec![
         (String::from("BAR"), String::from("test")),
         (String::from("BAZ"), String::from("true")),
-        (String::from("DOOM"), String::from("1,2,3"))
+        (String::from("DOOM"), String::from("1,2,3")),
+        (String::from("SIZE"), String::from("small"))
     ];
     match envy::from_iter::<_, Foo>(data.into_iter()) {
         Ok(foo) => {
@@ -35,7 +53,8 @@ fn deserialize_from_iter() {
                         zoom: None,
                         doom: vec![1,2,3],
                         kaboom: 8080,
-                        debug_mode: false
+                        debug_mode: false,
+                        size: Size::Small
                     }
             )
         },

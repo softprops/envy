@@ -140,7 +140,6 @@ impl<'de, Iter: Iterator<Item = (String, String)>> de::Deserializer<'de>
     fn deserialize_map<V>(self, visitor: V) -> Result<V::Value>
         where V: de::Visitor<'de>
     {
-        println!("deser map");
         visitor.visit_map(self.inner)
     }
 
