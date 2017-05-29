@@ -1,10 +1,41 @@
 //! envy is a library for deserializing env vars into typesafe structs
+//!
+//! # Examples
+//!
+//! A typical use case for envy is deserializing configuration stored into an env into a struct
+//! Serde makes it easy to provide a deserializable struct with the
+//! [serde_derive](https://crates.io/crates/serde_derive) crate. Simply ask for an instance of that
+//! struct from envy's `from_env` function.
+//!
+//! ```no_run,ignore
+//! #[macro_use]
+//! extern crate serde_derive;
+//!
+//! extern crate envy;
+//!
+//! use std::env;
+//!
+//! #[derive(Deserialize, Debug)]
+//! struct Config {
+//!  foo: u16,
+//!  bar: bool,
+//!  baz: String,
+//!  boom: Option<u64>
+//! }
+//!
+//! fn main() {
+//!    match envy::from_env::<Config>() {
+//!       Ok(config) => println!("{:#?}", config)
+//!       Err(error) => panic!("{:#?}", error)
+//!    }
+//! }
+//! ```
+//!
 #[macro_use]
 extern crate serde;
 
+use serde::de::value::{SeqDeserializer, MapDeserializer};
 use serde::de::{self, IntoDeserializer};
-use std::collections::HashMap;
-//use serde::de::value::ValueDeserializer;
 
 mod errors;
 pub use errors::Error;
@@ -12,206 +43,116 @@ pub use errors::Error;
 /// A type result type specific to `envy::Errors`
 pub type Result<T> = std::result::Result<T, Error>;
 
-/// an env var key, struct_field name, and value if one exists
-#[derive(Clone, Debug)]
-struct Var {
-    key: String,
-    struct_field: &'static str,
-    value: Option<String>,
-}
+struct Vars<Iter>(Iter) where Iter: Iterator<Item = (String, String)>;
 
-impl Var {
-    fn new(struct_field: &'static str, vars: &HashMap<String, String>) -> Var {
-        let key = struct_field.to_string().to_uppercase();
-        let value = vars.get(&key).map(|v| v.clone());
-        Var {
-            key: key,
-            struct_field: struct_field,
-            value: value,
-        }
+struct Val(String);
+
+impl<'de> IntoDeserializer<'de, Error> for Val {
+    type Deserializer = Self;
+
+    fn into_deserializer(self) -> Self::Deserializer {
+        self
     }
 }
 
-/// visits literal vec of strings
-struct SeqVisitor<'a> {
-    de: &'a mut Deserializer,
-    values: Vec<String>,
-}
+impl<Iter: Iterator<Item = (String, String)>> Iterator for Vars<Iter> {
+    type Item = (Val, Val);
 
-impl<'a> SeqVisitor<'a> {
-    fn new(de: &'a mut Deserializer, values: Vec<String>) -> SeqVisitor<'a> {
-        SeqVisitor {
-            de: de,
-            values: values,
-        }
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0
+            .next()
+            .map(|(k, v)| (Val(k.clone()), Val(v.clone())))
     }
 }
 
-impl<'de, 'a> de::SeqAccess<'de> for SeqVisitor<'a> {
-    type Error = Error;
-
-    fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>>
-        where T: de::DeserializeSeed<'de>
-    {
-        match self.values.pop() {
-            Some(val) => {
-                let mut de = ValDeserializer {
-                    de: self.de,
-                    value: val.clone(),
-                };
-                seed.deserialize(&mut de).map(Some)
+macro_rules! forward_parsed_values {
+    ($($ty:ident => $method:ident,)*) => {
+        $(
+            fn $method<V>(self, visitor: V) -> Result<V::Value>
+                where V: de::Visitor<'de>
+            {
+                match self.0.parse::<$ty>() {
+                    Ok(val) => val.into_deserializer().$method(visitor),
+                    Err(e) => Err(de::Error::custom(e))
+                }
             }
-            _ => Ok(None),
-        }
+        )*
     }
 }
 
-/// deserializes a single env string value
-/// if the intent to deserialize a seq, we split the string by
-// comma an deserialize the resolving values separately
-struct ValDeserializer<'a> {
-    de: &'a mut Deserializer,
-    value: String,
-}
-
-impl<'de, 'a, 'r> de::Deserializer<'de> for &'r mut ValDeserializer<'a> {
+impl<'de, 'a> de::Deserializer<'de> for Val {
     type Error = Error;
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
         where V: de::Visitor<'de>
     {
-        visitor.visit_string(self.value.clone())
+        self.0.into_deserializer().deserialize_any(visitor)
     }
 
     fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value>
         where V: de::Visitor<'de>
     {
-        let mut values = self.value
-            .split(",")
-            .map(|v| v.to_string())
-            .collect::<Vec<String>>();
-        values.reverse();
-        visitor.visit_seq(SeqVisitor::new(self.de, values))
+        let values = self.0.split(",").map(|v| Val(v.to_owned()));
+        SeqDeserializer::new(values).deserialize_seq(visitor)
     }
 
-    fn deserialize_struct<V>(self,
-                             _name: &'static str,
-                             _fields: &'static [&'static str],
-                             visitor: V)
-                             -> Result<V::Value>
-        where V: de::Visitor<'de>
-    {
-        self.de.deserialize_struct(_name, _fields, visitor)
+    forward_parsed_values! {
+        bool => deserialize_bool,
+        u8 => deserialize_u8,
+        u16 => deserialize_u16,
+        u32 => deserialize_u32,
+        u64 => deserialize_u64,
+        i8 => deserialize_i8,
+        i16 => deserialize_i16,
+        i32 => deserialize_i32,
+        i64 => deserialize_i64,
+        f32 => deserialize_f32,
+        f64 => deserialize_f64,
     }
 
     forward_to_deserialize_any! {
-        bool u8 u16 u32 u64 i8 i16 i32 i64 f32 f64 char str string unit
+        char str string unit
         bytes byte_buf map unit_struct tuple_struct
         identifier tuple ignored_any option newtype_struct enum
+        struct
     }
 }
 
 /// A deserializer for env vars
-struct Deserializer {
-    vars: HashMap<String, String>,
-    stack: Vec<Var>,
+struct Deserializer<'de, Iter: Iterator<Item = (String, String)>> {
+    inner: MapDeserializer<'de, Vars<Iter>, Error>,
 }
 
-impl Deserializer {
-    fn new(vars: HashMap<String, String>) -> Deserializer {
-        Deserializer {
-            vars: vars,
-            stack: vec![],
-        }
+impl<'de, Iter: Iterator<Item = (String, String)>> Deserializer<'de, Iter> {
+    fn new(vars: Iter) -> Self {
+        Deserializer { inner: MapDeserializer::new(Vars(vars)) }
     }
 }
 
-impl<'de, 'r> de::Deserializer<'de> for &'r mut Deserializer {
+impl<'de, Iter: Iterator<Item = (String, String)>> de::Deserializer<'de>
+    for Deserializer<'de, Iter> {
     type Error = Error;
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
         where V: de::Visitor<'de>
     {
-        visitor.visit_map(MapVisitor::new(self))
+        self.deserialize_map(visitor)
     }
 
-    fn deserialize_struct<V>(self,
-                             _name: &'static str,
-                             _fields: &'static [&'static str],
-                             visitor: V)
-                             -> Result<V::Value>
+    fn deserialize_map<V>(self, visitor: V) -> Result<V::Value>
         where V: de::Visitor<'de>
     {
-        for f in _fields {
-            let var = Var::new(f, &self.vars);
-            if var.value.is_some() {
-                self.stack.push(var)
-            }
-        }
-        self.deserialize_map(visitor)
+        println!("deser map");
+        visitor.visit_map(self.inner)
     }
 
     forward_to_deserialize_any! {
         bool u8 u16 u32 u64 i8 i16 i32 i64 f32 f64 char str string unit seq
-        bytes byte_buf map unit_struct tuple_struct
+        bytes byte_buf unit_struct tuple_struct
         identifier tuple ignored_any option newtype_struct enum
+        struct
     }
 }
 
-/// visits env map
-struct MapVisitor<'a> {
-    de: &'a mut Deserializer,
-}
-
-impl<'a> MapVisitor<'a> {
-    fn new(de: &'a mut Deserializer) -> MapVisitor<'a> {
-        MapVisitor { de: de }
-    }
-}
-
-impl<'de, 'a> de::MapAccess<'de> for MapVisitor<'a> {
-    type Error = Error;
-
-    fn next_key_seed<K>(&mut self, seed: K) -> Result<Option<K::Value>>
-        where K: de::DeserializeSeed<'de>
-    {
-        match self.de.stack.pop() {
-            Some(var) => {
-                // we have a var!...
-                self.de.stack.push(var.clone());
-                seed.deserialize(var.struct_field.into_deserializer())
-                    .map(Some)
-                //Ok(Some(try!(de::Deserialize::deserialize(&mut var.struct_field
-                //    .into_deserializer()))))
-            }
-            _ => Ok(None),
-        }
-    }
-
-    fn next_value_seed<V>(&mut self, seed: V) -> Result<V::Value>
-        where V: de::DeserializeSeed<'de>
-    {
-        match self.de.stack.pop() {
-            Some(Var {
-                     value: val,
-                     struct_field: field,
-                     ..
-                 }) => {
-                match val {
-                    Some(resolved) => {
-                        let mut de = ValDeserializer {
-                            de: self.de,
-                            value: resolved,
-                        };
-                        seed.deserialize(&mut de)
-                    }
-                    _ => Err(Error::MissingValue(field)),
-                }
-            }
-            _ => unreachable!(),
-        }
-    }
-}
-
-/// Deserializes a type based on information stored in env
+/// Deserializes a type based on information based on env variables
 pub fn from_env<T>() -> Result<T>
     where T: de::DeserializeOwned
 {
@@ -219,28 +160,10 @@ pub fn from_env<T>() -> Result<T>
 }
 
 /// Deserializes a type based on an iterable of `(String, String)`
+/// representing keys and values
 pub fn from_iter<Iter, T>(iter: Iter) -> Result<T>
     where T: de::DeserializeOwned,
           Iter: Iterator<Item = (String, String)>
 {
-    let mut vars = HashMap::new();
-    for (k, v) in iter {
-        vars.insert(k, v);
-    }
-    let mut deser = Deserializer::new(vars);
-    let value = try!(de::Deserialize::deserialize(&mut deser));
-    Ok(value)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::Var;
-    use std::collections::HashMap;
-    #[test]
-    fn var_name_format() {
-        let mut vars = HashMap::new();
-        vars.insert(String::from("FOO_BAR"), String::from("BAR"));
-        let var = Var::new("foo_bar", &vars);
-        assert_eq!(var.key, String::from("FOO_BAR"))
-    }
+    T::deserialize(Deserializer::new(iter.map(|(k, v)| (k.to_lowercase(), v))))
 }

@@ -22,8 +22,6 @@ assuming your rust program looks something like this.
 extern crate serde_derive;
 extern crate envy;
 
-use std::env;
-
 #[derive(Deserialize, Debug)]
 struct Config {
   foo: u16,

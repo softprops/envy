@@ -43,7 +43,7 @@ fn deserialize_from_iter() {
     }
 }
 
-/*#[test]
+#[test]
 fn fails_with_missing_value() {
     let data = vec![
         (String::from("BAR"), String::from("test")),
@@ -64,6 +64,6 @@ fn fails_with_invalid_type() {
     ];
     match envy::from_iter::<_, Foo>(data.into_iter()) {
         Ok(_) => panic!("expected failure"),
-        Err(e) => assert_eq!(e, envy::Error::Custom(String::from("invalid type: string \"notabool\", expected a boolean")))
+        Err(e) => assert_eq!(e, envy::Error::Custom(String::from("provided string was not `true` or `false`")))
     }
-}*/
+}
