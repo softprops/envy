@@ -87,8 +87,6 @@ $ FOO=8080 BAR=true BAZ=hello ZOOM=10 yourapp
 
 ## potential areas of improvement
 
-* deserializing enums
-
 * error handling/reporting
 
-Doug Tangren (softprops) 2016
+Doug Tangren (softprops) 2016-2017
