@@ -3,6 +3,8 @@
 //! # Examples
 //!
 //! A typical use case for envy is deserializing configuration stored into an env into a struct
+//! whose fields map to the names of env vars.
+//!
 //! Serde makes it easy to provide a deserializable struct with the
 //! [serde_derive](https://crates.io/crates/serde_derive) crate. Simply ask for an instance of that
 //! struct from envy's `from_env` function.
