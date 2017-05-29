@@ -13,8 +13,6 @@
 //!
 //! extern crate envy;
 //!
-//! use std::env;
-//!
 //! #[derive(Deserialize, Debug)]
 //! struct Config {
 //!  foo: u16,
@@ -31,11 +29,47 @@
 //! }
 //! ```
 //!
+//! Special treatment is given to collections. For config fields that store a `Vec` of values,
+//! use and env var that uses a comma separated value
+//!
+//! All serde modifier should work as is
+//!
+//! If you wish to use enum types use the following
+//!
+//! ```no_run,ignore
+//! #[macro_use]
+//! extern crate serde_derive;
+//!
+//! extern crate envy;
+//!
+//! #[derive(Deserialize, Debug, PartialEq)]
+//! #[serde(untagged)]
+//! #[serde(field_identifier, rename_all = "lowercase")]
+//! pub enum Size {
+//!    Small,
+//!    Medium,
+//!    Large
+//! }
+//!
+//! #[derive(Deserialize, Debug)]
+//! struct Config {
+//!  size: Size,
+//! }
+//!
+//! fn main() {
+//!    // set env var for size as `SIZE=medium`
+//!    match envy::from_env::<Config>() {
+//!       Ok(config) => println!("{:#?}", config)
+//!       Err(error) => panic!("{:#?}", error)
+//!    }
+//! }
+//! ```
 #[macro_use]
 extern crate serde;
 
 use serde::de::value::{SeqDeserializer, MapDeserializer};
 use serde::de::{self, IntoDeserializer};
+use std::env;
 
 mod errors;
 pub use errors::Error;
@@ -155,7 +189,7 @@ impl<'de, Iter: Iterator<Item = (String, String)>> de::Deserializer<'de>
 pub fn from_env<T>() -> Result<T>
     where T: de::DeserializeOwned
 {
-    from_iter(::std::env::vars())
+    from_iter(env::vars())
 }
 
 /// Deserializes a type based on an iterable of `(String, String)`
