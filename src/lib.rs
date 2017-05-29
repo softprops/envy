@@ -17,10 +17,10 @@
 //!
 //! #[derive(Deserialize, Debug)]
 //! struct Config {
-//!  foo: u16,
-//!  bar: bool,
-//!  baz: String,
-//!  boom: Option<u64>
+//!   foo: u16,
+//!   bar: bool,
+//!   baz: String,
+//!   boom: Option<u64>
 //! }
 //!
 //! fn main() {
