@@ -10,7 +10,7 @@ Add the following to your Cargo.toml fails_with_invalid_type
 
 ```toml
 [dependencies]
-envy = "0.2"
+envy = "0.3"
 ```
 
 ## usage
