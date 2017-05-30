@@ -33,7 +33,8 @@ pub struct Foo {
     #[serde(default)]
     debug_mode: bool,
     #[serde(default)]
-    size: Size
+    size: Size,
+    provided: Option<String>
 }
 
 #[test]
@@ -42,7 +43,8 @@ fn deserialize_from_iter() {
         (String::from("BAR"), String::from("test")),
         (String::from("BAZ"), String::from("true")),
         (String::from("DOOM"), String::from("1,2,3")),
-        (String::from("SIZE"), String::from("small"))
+        (String::from("SIZE"), String::from("small")),
+        (String::from("PROVIDED"), String::from("test"))
     ];
     match envy::from_iter::<_, Foo>(data.into_iter()) {
         Ok(foo) => {
@@ -54,7 +56,8 @@ fn deserialize_from_iter() {
                         doom: vec![1,2,3],
                         kaboom: 8080,
                         debug_mode: false,
-                        size: Size::Small
+                        size: Size::Small,
+                        provided: Some(String::from("test"))
                     }
             )
         },

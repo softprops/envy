@@ -1,3 +1,7 @@
+# 0.3.1
+
+* fix option support
+
 # 0.3.0
 
 * upgrade to the latest serde (1.0)
