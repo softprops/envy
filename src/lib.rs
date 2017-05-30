@@ -131,6 +131,12 @@ impl<'de, 'a> de::Deserializer<'de> for Val {
         SeqDeserializer::new(values).deserialize_seq(visitor)
     }
 
+    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value>
+        where V: de::Visitor<'de>
+    {
+        visitor.visit_some(self)
+    }
+
     forward_parsed_values! {
         bool => deserialize_bool,
         u8 => deserialize_u8,
@@ -148,7 +154,7 @@ impl<'de, 'a> de::Deserializer<'de> for Val {
     forward_to_deserialize_any! {
         char str string unit
         bytes byte_buf map unit_struct tuple_struct
-        identifier tuple ignored_any option newtype_struct enum
+        identifier tuple ignored_any newtype_struct enum
         struct
     }
 }
