@@ -10,7 +10,7 @@ struct Config {
 
 fn main() {
     match envy::from_env::<Config>() {
-        Ok(config) => println!("provided config.example {:?}", config.size),
+        Ok(config) => println!("provided config.size {:?}", config.size),
         Err(err) => println!("error parsing config from env: {}", err),
     }
 }
