@@ -1,3 +1,7 @@
+# 0.3.2
+
+* add new `envy::prefixed(...)` interface for prefixed env var names
+
 # 0.3.1
 
 * fix option support

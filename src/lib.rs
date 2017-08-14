@@ -71,6 +71,7 @@ extern crate serde;
 
 use serde::de::value::{SeqDeserializer, MapDeserializer};
 use serde::de::{self, IntoDeserializer};
+use std::borrow::Cow;
 use std::env;
 
 mod errors;
@@ -79,7 +80,9 @@ pub use errors::Error;
 /// A type result type specific to `envy::Errors`
 pub type Result<T> = std::result::Result<T, Error>;
 
-struct Vars<Iter>(Iter) where Iter: Iterator<Item = (String, String)>;
+struct Vars<Iter>(Iter)
+where
+    Iter: Iterator<Item = (String, String)>;
 
 struct Val(String);
 
@@ -95,9 +98,7 @@ impl<Iter: Iterator<Item = (String, String)>> Iterator for Vars<Iter> {
     type Item = (Val, Val);
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.0
-            .next()
-            .map(|(k, v)| (Val(k.clone()), Val(v.clone())))
+        self.0.next().map(|(k, v)| (Val(k.clone()), Val(v.clone())))
     }
 }
 
@@ -119,20 +120,23 @@ macro_rules! forward_parsed_values {
 impl<'de, 'a> de::Deserializer<'de> for Val {
     type Error = Error;
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
-        where V: de::Visitor<'de>
+    where
+        V: de::Visitor<'de>,
     {
         self.0.into_deserializer().deserialize_any(visitor)
     }
 
     fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value>
-        where V: de::Visitor<'de>
+    where
+        V: de::Visitor<'de>,
     {
         let values = self.0.split(",").map(|v| Val(v.to_owned()));
         SeqDeserializer::new(values).deserialize_seq(visitor)
     }
 
     fn deserialize_option<V>(self, visitor: V) -> Result<V::Value>
-        where V: de::Visitor<'de>
+    where
+        V: de::Visitor<'de>,
     {
         visitor.visit_some(self)
     }
@@ -174,13 +178,15 @@ impl<'de, Iter: Iterator<Item = (String, String)>> de::Deserializer<'de>
     for Deserializer<'de, Iter> {
     type Error = Error;
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
-        where V: de::Visitor<'de>
+    where
+        V: de::Visitor<'de>,
     {
         self.deserialize_map(visitor)
     }
 
     fn deserialize_map<V>(self, visitor: V) -> Result<V::Value>
-        where V: de::Visitor<'de>
+    where
+        V: de::Visitor<'de>,
     {
         visitor.visit_map(self.inner)
     }
@@ -195,7 +201,8 @@ impl<'de, Iter: Iterator<Item = (String, String)>> de::Deserializer<'de>
 
 /// Deserializes a type based on information based on env variables
 pub fn from_env<T>() -> Result<T>
-    where T: de::DeserializeOwned
+where
+    T: de::DeserializeOwned,
 {
     from_iter(env::vars())
 }
@@ -203,8 +210,45 @@ pub fn from_env<T>() -> Result<T>
 /// Deserializes a type based on an iterable of `(String, String)`
 /// representing keys and values
 pub fn from_iter<Iter, T>(iter: Iter) -> Result<T>
-    where T: de::DeserializeOwned,
-          Iter: Iterator<Item = (String, String)>
+where
+    T: de::DeserializeOwned,
+    Iter: Iterator<Item = (String, String)>,
 {
     T::deserialize(Deserializer::new(iter.map(|(k, v)| (k.to_lowercase(), v))))
+}
+
+/// A type which filters env vars with a prefixed for use as serde field inputs
+pub struct Prefixed<'a>(Cow<'a, str>);
+
+impl<'a> Prefixed<'a> {
+    /// Deserializes a type based on prefixed env varables
+    pub fn from_env<T>(&self) -> Result<T>
+    where
+        T: de::DeserializeOwned,
+    {
+        self.from_iter(env::vars())
+    }
+
+    /// Deserializes a type based on prefixed (String, String) tuples
+    pub fn from_iter<Iter, T>(&self, iter: Iter) -> Result<T>
+    where
+        T: de::DeserializeOwned,
+        Iter: Iterator<Item = (String, String)>,
+    {
+        ::from_iter(iter.filter_map(
+            |(k, v)| if k.starts_with(self.0.as_ref()) {
+                Some((k.trim_left_matches(self.0.as_ref()).to_owned(), v))
+            } else {
+                None
+            },
+        ))
+    }
+}
+
+/// produces a instance of `Prefixed` for prefixing env variable names
+pub fn prefixed<'a, C>(prefix: C) -> Prefixed<'a>
+where
+    C: Into<Cow<'a, str>>,
+{
+    Prefixed(prefix.into())
 }
