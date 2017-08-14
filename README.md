@@ -85,6 +85,38 @@ The following will yield an application configured with a zoom of 10
 $ FOO=8080 BAR=true BAZ=hello ZOOM=10 yourapp
 ```
 
+The common pattern for prefixing env var names for a specific app is supported using
+the `envy::prefixed(prefix)` interface. Asumming your env vars are prefixed with `APP_`
+the above example may instead look like
+
+```rust
+#[macro_use]
+extern crate serde_derive;
+extern crate envy;
+
+#[derive(Deserialize, Debug)]
+struct Config {
+  foo: u16,
+  bar: bool,
+  baz: String,
+  boom: Option<u64>
+}
+
+fn main() {
+    match envy::prefixed("APP_").from_env::<Config>() {
+       Ok(config) => println!("{:#?}", config)
+       Err(error) => panic!("{:#?}", error)
+    }
+}
+```
+
+the expectation would then be to export the same environment variables prefixed with `APP_`
+
+```bash
+$ APP_FOO=8080 APP_BAR=true APP_BAZ=hello yourapp
+```
+
+
 ## potential areas of improvement
 
 * error handling/reporting
