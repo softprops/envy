@@ -2,6 +2,13 @@ sudo: required
 
 language: rust
 
+# only build pushes to master
+# prs are build separately
+# https://docs.travis-ci.com/user/pull-requests/#how-pull-requests-are-built
+branches:
+  only:
+  - master
+
 matrix:
   fast_finish: true
   include:
