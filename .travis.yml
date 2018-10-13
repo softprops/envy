@@ -1,43 +1,71 @@
-sudo: false
+sudo: required
+
 language: rust
+
+# only build pushes to master
+# prs are build separately
+# https://docs.travis-ci.com/user/pull-requests/#how-pull-requests-are-built
+branches:
+  only:
+  - master
+
 matrix:
   fast_finish: true
   include:
-  - rust: nightly
-  - rust: beta
   - rust: stable
-  allow_failures:
+  - rust: beta
   - rust: nightly
+
+install: |
+  # should only be necessary until rustfmt produces consistent results in stable/nightly
+  # see also https://github.com/xd009642/tarpaulin/issues/150 for tarpaulin nightly dependency
+  if [[ "$TRAVIS_RUST_VERSION" == nightly ]]; then
+    `RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install --force cargo-tarpaulin`
+    rustup component add rustfmt-preview --toolchain nightly
+  fi
+
 script:
-- make build
-- make test
+- |
+  if [[ "$TRAVIS_RUST_VERSION" == nightly ]]; then
+    cargo fmt --all -- --check
+  fi
+- cargo test
+- cargo test --manifest-path serde-tests/Cargo.toml
+
+# Cache `cargo install`ed tools, but don't cache the project's `target`
+# directory (which ends up over-caching and filling all disk space!)
+# https://levans.fr/rust_travis_cache.html
 cache:
-  cargo: true
-  apt: true
   directories:
-  - target/debug/deps
-  - target/debug/build
+    - /home/travis/.cargo
+
+before_cache:
+  # But don't cache the cargo registry
+  - rm -rf /home/travis/.cargo/registry
+  # Travis can't cache files that are not readable by "others"
+  - chmod -R a+r $HOME/.cargo
+
 addons:
   apt:
     packages:
-    - libcurl4-openssl-dev
-    - libelf-dev
-    - libdw-dev
-    - binutils-dev
-    - libbfd-dev
-after_success: |
-  [ $TRAVIS_RUST_VERSION = stable ] &&
-  [ $TRAVIS_BRANCH = master ] &&
-  [ $TRAVIS_PULL_REQUEST = false ] &&
-  cargo doc --no-deps &&
-  echo "<meta http-equiv=refresh content=0;url=`echo $TRAVIS_REPO_SLUG | cut -d '/' -f 2`/index.html>" > target/doc/index.html &&
-  pip install --user ghp-import &&
-  /home/travis/.local/bin/ghp-import -n target/doc &&
-  git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages &&
-  wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
-  tar xzf master.tar.gz && mkdir kcov-master/build && cd kcov-master/build && cmake .. && make && make install DESTDIR=../tmp && cd ../.. &&
-  ls target/debug &&
-  ./kcov-master/tmp/usr/local/bin/kcov --verify --coveralls-id=$TRAVIS_JOB_ID --exclude-pattern=/.cargo target/kcov serde-tests/target/debug/serde_tests-*
+    - libssl-dev
+
+after_success:
+  - '[ $TRAVIS_EVENT_TYPE != "cron" ] &&
+    [ $TRAVIS_RUST_VERSION = nightly ] &&
+    [ $TRAVIS_BRANCH = master ] &&
+    [ $TRAVIS_PULL_REQUEST = false ] &&
+     cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID || true'
+  - '[ $TRAVIS_RUST_VERSION = stable ] &&
+    [ $TRAVIS_BRANCH = master ] &&
+    [ $TRAVIS_PULL_REQUEST = false ]
+    && cargo doc --no-deps &&
+    echo "<meta http-equiv=refresh content=0;url=`echo $TRAVIS_REPO_SLUG | cut -d / -f 2`/index.html>" > target/doc/index.html &&
+    pip install --user ghp-import &&
+    /home/travis/.local/bin/ghp-import -n target/doc &&
+    git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages &&
+    echo "documented"'
+
 env:
   global:
     secure: cCalpB4o2bCVi0um2nCiR+wKLLdSb1mnK+wbw18Rz9RoRJQv/wyE9qyxtrDdWjJIIhH4zZ0GozcKUC3dXTNC6n7akbnEWKhKJhOT7M3XUwPtNao1k5PuCwNHaJo+XUCRwjYAcUwIpap9YmnEybwz0WAp1xBaBe8OivittJQvf6m9xvld0UFBlYnfMxD4+1/4OOb6tQSf/7USsXU87FctZpYxeqGPv0I23Jye0LwU1glgkA1g12rU8+5iOOA/hMTG32FTilnsDXDeV0Sry5Zj75ihKw0IzdsPSeV07Fky+6/2uyyJCqCIpDY7hFztQ0f71213UbkKZOOMaEW0Z4x8mPRlXFFVNdSz70otdPq/xpr36X7B6+HQYqUVhDMSQ1vmw0qbhtYnottYEJbhDjdopfr0Sm1xRMXEn/8ehxKSElKMnneIed7GXXPl+C7lMDGioMDwCOoQl+X79AjbbcK6HTJLKegVofgEgpgGT5dukJVsGwar2d2uFMmZYWs5rTvo7n3jRJ+Sl06CAq7z8WCHQZkVmL6fIuILosT+RLCRjOnLF71XTaK02HFUfHa4j0UQFD2gyFKqGT4HlWi/3IC4hPNxQQvmnt823ORJdVNBYuUeMG0JPE/GgUqCrh8ATLAL79e2xCTkqekb1CQD90XlWt4yf/eC8e21tEb5blxMmWY=
