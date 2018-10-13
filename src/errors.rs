@@ -1,6 +1,6 @@
-use std::fmt;
-use std::error::Error as StdError;
 use serde::de::Error as SerdeError;
+use std::error::Error as StdError;
+use std::fmt;
 
 /// Types of errors that may result from failed attempts
 /// to deserialize a type from env vars
@@ -26,7 +26,10 @@ impl StdError for Error {
 }
 
 impl fmt::Display for Error {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(
+        &self,
+        fmt: &mut fmt::Formatter,
+    ) -> fmt::Result {
         match *self {
             Error::MissingValue(field) => write!(fmt, "missing value for field {}", field),
             Error::Custom(ref msg) => write!(fmt, "{}", msg),

@@ -69,7 +69,7 @@
 #[macro_use]
 extern crate serde;
 
-use serde::de::value::{SeqDeserializer, MapDeserializer};
+use serde::de::value::{MapDeserializer, SeqDeserializer};
 use serde::de::{self, IntoDeserializer};
 use std::borrow::Cow;
 use std::env;
@@ -119,14 +119,20 @@ macro_rules! forward_parsed_values {
 
 impl<'de, 'a> de::Deserializer<'de> for Val {
     type Error = Error;
-    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
+    fn deserialize_any<V>(
+        self,
+        visitor: V,
+    ) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
         self.0.into_deserializer().deserialize_any(visitor)
     }
 
-    fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value>
+    fn deserialize_seq<V>(
+        self,
+        visitor: V,
+    ) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
@@ -134,7 +140,10 @@ impl<'de, 'a> de::Deserializer<'de> for Val {
         SeqDeserializer::new(values).deserialize_seq(visitor)
     }
 
-    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value>
+    fn deserialize_option<V>(
+        self,
+        visitor: V,
+    ) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
@@ -170,21 +179,30 @@ struct Deserializer<'de, Iter: Iterator<Item = (String, String)>> {
 
 impl<'de, Iter: Iterator<Item = (String, String)>> Deserializer<'de, Iter> {
     fn new(vars: Iter) -> Self {
-        Deserializer { inner: MapDeserializer::new(Vars(vars)) }
+        Deserializer {
+            inner: MapDeserializer::new(Vars(vars)),
+        }
     }
 }
 
 impl<'de, Iter: Iterator<Item = (String, String)>> de::Deserializer<'de>
-    for Deserializer<'de, Iter> {
+    for Deserializer<'de, Iter>
+{
     type Error = Error;
-    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
+    fn deserialize_any<V>(
+        self,
+        visitor: V,
+    ) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
         self.deserialize_map(visitor)
     }
 
-    fn deserialize_map<V>(self, visitor: V) -> Result<V::Value>
+    fn deserialize_map<V>(
+        self,
+        visitor: V,
+    ) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
@@ -230,18 +248,21 @@ impl<'a> Prefixed<'a> {
     }
 
     /// Deserializes a type based on prefixed (String, String) tuples
-    pub fn from_iter<Iter, T>(&self, iter: Iter) -> Result<T>
+    pub fn from_iter<Iter, T>(
+        &self,
+        iter: Iter,
+    ) -> Result<T>
     where
         T: de::DeserializeOwned,
         Iter: Iterator<Item = (String, String)>,
     {
-        ::from_iter(iter.filter_map(
-            |(k, v)| if k.starts_with(self.0.as_ref()) {
+        ::from_iter(iter.filter_map(|(k, v)| {
+            if k.starts_with(self.0.as_ref()) {
                 Some((k.trim_left_matches(self.0.as_ref()).to_owned(), v))
             } else {
                 None
-            },
-        ))
+            }
+        }))
     }
 }
 
