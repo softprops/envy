@@ -8,6 +8,7 @@ homepage = "https://github.com/softprops/envy"
 repository = "https://github.com/softprops/envy"
 keywords = ["serde", "env"]
 license = "MIT"
+readme = "README.md"
 
 [dependencies]
 serde = "1.0"
