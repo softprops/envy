@@ -4,7 +4,7 @@
 
 ## [Documentation](https://softprops.github.io/envy)
 
-## install
+## 📦  install
 
 Add the following to your Cargo.toml fails_with_invalid_type
 
@@ -13,7 +13,7 @@ Add the following to your Cargo.toml fails_with_invalid_type
 envy = "0.3"
 ```
 
-## usage
+## 🤸 usage
 
 assuming your rust program looks something like this.
 
@@ -116,8 +116,10 @@ the expectation would then be to export the same environment variables prefixed 
 $ APP_FOO=8080 APP_BAR=true APP_BAZ=hello yourapp
 ```
 
+> 👭 Consider this a cousin of [envy](https://github.com/softprops/envy-store) a crate for deserializing AWS parmeter store values into into typesafe structs.
 
-## potential areas of improvement
+
+## 👷 potential areas of improvement
 
 * error handling/reporting
 
