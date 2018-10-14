@@ -13,8 +13,6 @@ envy = "0.3"
 
 ## 🤸 usage
 
-> 👭 Consider this a cousin of [envy](https://github.com/softprops/envy-store) a crate for deserializing AWS parmeter store values into into typesafe structs.
-
 A typical envy usage looks like the following. Assuming your rust program looks something like this...
 
 ```rust
@@ -116,6 +114,7 @@ the expectation would then be to export the same environment variables prefixed 
 $ APP_FOO=8080 APP_BAR=true APP_BAZ=hello yourapp
 ```
 
+> 👭 Consider this crate a cousin of [envy-store](https://github.com/softprops/envy-store), a crate for deserializing AWS parmeter store values into into typesafe structs.
 
 ## 👷 potential areas of improvement
 
