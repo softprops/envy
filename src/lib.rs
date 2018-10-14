@@ -273,3 +273,19 @@ where
 {
     Prefixed(prefix.into())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::HashMap;
+    #[test]
+    fn prefixed_strips_prefixes() {
+        let mut expected = HashMap::new();
+        expected.insert("foo".to_string(), "bar".to_string());
+        assert_eq!(
+            prefixed("PRE_")
+                .from_iter(vec![("PRE_FOO".to_string(), "bar".to_string())].into_iter()),
+            Ok(expected)
+        );
+    }
+}
