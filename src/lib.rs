@@ -136,7 +136,7 @@ impl<'de, 'a> de::Deserializer<'de> for Val {
     where
         V: de::Visitor<'de>,
     {
-        let values = self.0.split(",").map(|v| Val(v.to_owned()));
+        let values = self.0.split(',').map(|v| Val(v.to_owned()));
         SeqDeserializer::new(values).deserialize_seq(visitor)
     }
 
