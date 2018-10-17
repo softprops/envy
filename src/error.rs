@@ -69,4 +69,13 @@ mod tests {
         assert_eq!(format!("{}", Error::Custom("whoops".into())), "whoops")
     }
 
+    #[test]
+    fn error_description() {
+        assert_eq!(
+            Error::MissingValue("foo_bar").description(),
+            "missing value"
+        );
+
+        assert_eq!(Error::Custom("whoops".into()).description(), "custom error")
+    }
 }
