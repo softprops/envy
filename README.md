@@ -4,7 +4,7 @@
 
 ## 📦  install
 
-Add the following to your Cargo.toml fails_with_invalid_type
+Add the following to your `Cargo.toml` file.
 
 ```toml
 [dependencies]
