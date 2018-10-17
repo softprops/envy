@@ -46,3 +46,27 @@ impl SerdeError for Error {
         Error::MissingValue(field)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn impl_std_error<E: StdError>(_: E) {}
+
+    #[test]
+    fn error_impl_std_error() {
+        impl_std_error(Error::MissingValue("foo_bar"));
+        impl_std_error(Error::Custom("whoops".into()))
+    }
+
+    #[test]
+    fn error_display() {
+        assert_eq!(
+            format!("{}", Error::MissingValue("foo_bar")),
+            "missing value for field foo_bar"
+        );
+
+        assert_eq!(format!("{}", Error::Custom("whoops".into())), "whoops")
+    }
+
+}
