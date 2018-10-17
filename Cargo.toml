@@ -9,6 +9,13 @@ repository = "https://github.com/softprops/envy"
 keywords = ["serde", "env"]
 license = "MIT"
 readme = "README.md"
+categories = [
+  "config"
+]
+
+[badges]
+coveralls = { repository = "softprops/envy" }
+travis-ci = { repository = "softprops/envy" }
 
 [dependencies]
 serde = "1.0"
