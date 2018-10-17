@@ -30,7 +30,6 @@ script:
     cargo fmt --all -- --check
   fi
 - cargo test
-- cargo test --manifest-path serde-tests/Cargo.toml
 
 # Cache `cargo install`ed tools, but don't cache the project's `target`
 # directory (which ends up over-caching and filling all disk space!)
