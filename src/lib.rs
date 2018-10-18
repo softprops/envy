@@ -221,7 +221,7 @@ impl<'de, Iter: Iterator<Item = (String, String)>> de::Deserializer<'de>
     }
 }
 
-/// Deserializes a type based on information based on env variables
+/// Deserializes a type based on information stored in env variables
 pub fn from_env<T>() -> Result<T>
 where
     T: de::DeserializeOwned,
@@ -239,7 +239,7 @@ where
     T::deserialize(Deserializer::new(iter.map(|(k, v)| (k.to_lowercase(), v))))
 }
 
-/// A type which filters env vars with a prefixed for use as serde field inputs
+/// A type which filters env vars with a prefix for use as serde field inputs
 pub struct Prefixed<'a>(Cow<'a, str>);
 
 impl<'a> Prefixed<'a> {
