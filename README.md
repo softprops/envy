@@ -44,13 +44,13 @@ $ FOO=8080 BAR=true BAZ=hello yourapp
 
 You should be able to access a completely typesafe config struct deserialized from env vars.
 
-Envy assumes an env var exists for each struct field with a matching name in all uppercase letters. i.e. A struct field `foo_bar` would map to an env var named `FOO_BAR`
+Envy assumes an env var exists for each struct field with a matching name in all uppercase letters. i.e. A struct field `foo_bar` would map to an env var named `FOO_BAR`.
 
 Structs with `Option` type fields will successfully be deserialized when their associated env var is absent.
 
 Envy also supports deserializing `Vecs` from comma separated env var values.
 
-Because envy is built on top of serde, you take use all of serde's [attributes](https://serde.rs/attributes.html) to your advantage
+Because envy is built on top of serde, you take use all of serde's [attributes](https://serde.rs/attributes.html) to your advantage.
 
 For instance let's say you're app requires a field but would like a sensible default when one is not provided.
 ```rust
@@ -114,7 +114,7 @@ the expectation would then be to export the same environment variables prefixed 
 $ APP_FOO=8080 APP_BAR=true APP_BAZ=hello yourapp
 ```
 
-> 👭 Consider this crate a cousin of [envy-store](https://github.com/softprops/envy-store), a crate for deserializing AWS parmeter store values into into typesafe structs.
+> 👭 Consider this crate a cousin of [envy-store](https://github.com/softprops/envy-store), a crate for deserializing AWS parameter store values into into typesafe structs.
 
 ## 👷 potential areas of improvement
 
