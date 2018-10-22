@@ -1,3 +1,4 @@
+//! Error types
 use serde::de::Error as SerdeError;
 use std::error::Error as StdError;
 use std::fmt;
