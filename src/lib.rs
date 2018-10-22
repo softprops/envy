@@ -1,4 +1,4 @@
-//! envy is a library for deserializing env vars into typesafe structs
+//! Envy is a library for deserializing env vars into typesafe structs
 //!
 //! # Examples
 //!
@@ -9,7 +9,7 @@
 //! [serde_derive](https://crates.io/crates/serde_derive) crate. Simply ask for an instance of that
 //! struct from envy's `from_env` function.
 //!
-//! ```no_run,ignore
+//! ```no_run
 //! #[macro_use]
 //! extern crate serde_derive;
 //!
@@ -25,7 +25,7 @@
 //!
 //! fn main() {
 //!    match envy::from_env::<Config>() {
-//!       Ok(config) => println!("{:#?}", config)
+//!       Ok(config) => println!("{:#?}", config),
 //!       Err(error) => panic!("{:#?}", error)
 //!    }
 //! }
@@ -38,7 +38,7 @@
 //!
 //! If you wish to use enum types use the following
 //!
-//! ```no_run,ignore
+//! ```no_run
 //! #[macro_use]
 //! extern crate serde_derive;
 //!
@@ -61,23 +61,27 @@
 //! fn main() {
 //!    // set env var for size as `SIZE=medium`
 //!    match envy::from_env::<Config>() {
-//!       Ok(config) => println!("{:#?}", config)
+//!       Ok(config) => println!("{:#?}", config),
 //!       Err(error) => panic!("{:#?}", error)
 //!    }
 //! }
 //! ```
 #[macro_use]
 extern crate serde;
-
 #[cfg(test)]
 #[macro_use]
 extern crate serde_derive;
 
-use serde::de::value::{MapDeserializer, SeqDeserializer};
-use serde::de::{self, IntoDeserializer};
+// Std
 use std::borrow::Cow;
 use std::env;
+use std::iter::IntoIterator;
 
+// Third party
+use serde::de::value::{MapDeserializer, SeqDeserializer};
+use serde::de::{self, IntoDeserializer};
+
+// Ours
 mod error;
 pub use error::Error;
 
@@ -86,7 +90,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 struct Vars<Iter>(Iter)
 where
-    Iter: Iterator<Item = (String, String)>;
+    Iter: IntoIterator<Item = (String, String)>;
 
 struct Val(String);
 
@@ -234,12 +238,16 @@ where
 pub fn from_iter<Iter, T>(iter: Iter) -> Result<T>
 where
     T: de::DeserializeOwned,
-    Iter: Iterator<Item = (String, String)>,
+    Iter: IntoIterator<Item = (String, String)>,
 {
-    T::deserialize(Deserializer::new(iter.map(|(k, v)| (k.to_lowercase(), v))))
+    T::deserialize(Deserializer::new(
+        iter.into_iter().map(|(k, v)| (k.to_lowercase(), v)),
+    ))
 }
 
 /// A type which filters env vars with a prefix for use as serde field inputs
+///
+/// These types are created with with the [prefixed](fn.prefixed.html) module function
 pub struct Prefixed<'a>(Cow<'a, str>);
 
 impl<'a> Prefixed<'a> {
@@ -258,9 +266,9 @@ impl<'a> Prefixed<'a> {
     ) -> Result<T>
     where
         T: de::DeserializeOwned,
-        Iter: Iterator<Item = (String, String)>,
+        Iter: IntoIterator<Item = (String, String)>,
     {
-        ::from_iter(iter.filter_map(|(k, v)| {
+        ::from_iter(iter.into_iter().filter_map(|(k, v)| {
             if k.starts_with(self.0.as_ref()) {
                 Some((k.trim_left_matches(self.0.as_ref()).to_owned(), v))
             } else {
@@ -270,7 +278,33 @@ impl<'a> Prefixed<'a> {
     }
 }
 
-/// produces a instance of `Prefixed` for prefixing env variable names
+/// Produces a instance of `Prefixed` for prefixing env variable names
+///
+/// # Example
+///
+/// ```no_run
+/// #[macro_use]
+/// extern crate serde_derive;
+///
+/// extern crate envy;
+///
+/// #[derive(Deserialize, Debug)]
+/// struct Config {
+///   foo: u16,
+///   bar: bool,
+///   baz: String,
+///   boom: Option<u64>
+/// }
+///
+/// fn main() {
+///    // all env variables will be expected to be prefixed with APP_
+///    // i.e. APP_FOO, APP_BAR, ect
+///    match envy::prefixed("APP_").from_env::<Config>() {
+///       Ok(config) => println!("{:#?}", config),
+///       Err(error) => panic!("{:#?}", error)
+///    }
+/// }
+/// ```
 pub fn prefixed<'a, C>(prefix: C) -> Prefixed<'a>
 where
     C: Into<Cow<'a, str>>,
@@ -326,7 +360,7 @@ mod tests {
             (String::from("SIZE"), String::from("small")),
             (String::from("PROVIDED"), String::from("test")),
         ];
-        match from_iter::<_, Foo>(data.into_iter()) {
+        match from_iter::<_, Foo>(data) {
             Ok(foo) => assert_eq!(
                 foo,
                 Foo {
@@ -350,7 +384,7 @@ mod tests {
             (String::from("BAR"), String::from("test")),
             (String::from("BAZ"), String::from("true")),
         ];
-        match from_iter::<_, Foo>(data.into_iter()) {
+        match from_iter::<_, Foo>(data) {
             Ok(_) => panic!("expected failure"),
             Err(e) => assert_eq!(e, Error::MissingValue("doom")),
         }
@@ -363,7 +397,7 @@ mod tests {
             (String::from("BAZ"), String::from("notabool")),
             (String::from("DOOM"), String::from("1,2,3")),
         ];
-        match from_iter::<_, Foo>(data.into_iter()) {
+        match from_iter::<_, Foo>(data) {
             Ok(_) => panic!("expected failure"),
             Err(e) => assert_eq!(
                 e,
@@ -381,7 +415,7 @@ mod tests {
             (String::from("APP_SIZE"), String::from("small")),
             (String::from("APP_PROVIDED"), String::from("test")),
         ];
-        match prefixed("APP_").from_iter::<_, Foo>(data.into_iter()) {
+        match prefixed("APP_").from_iter::<_, Foo>(data) {
             Ok(foo) => assert_eq!(
                 foo,
                 Foo {
@@ -404,8 +438,7 @@ mod tests {
         let mut expected = HashMap::new();
         expected.insert("foo".to_string(), "bar".to_string());
         assert_eq!(
-            prefixed("PRE_")
-                .from_iter(vec![("PRE_FOO".to_string(), "bar".to_string())].into_iter()),
+            prefixed("PRE_").from_iter(vec![("PRE_FOO".to_string(), "bar".to_string())]),
             Ok(expected)
         );
     }
