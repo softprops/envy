@@ -30,7 +30,7 @@ struct Config {
 
 fn main() {
     match envy::from_env::<Config>() {
-       Ok(config) => println!("{:#?}", config)
+       Ok(config) => println!("{:#?}", config),
        Err(error) => panic!("{:#?}", error)
     }
 }
@@ -102,7 +102,7 @@ struct Config {
 
 fn main() {
     match envy::prefixed("APP_").from_env::<Config>() {
-       Ok(config) => println!("{:#?}", config)
+       Ok(config) => println!("{:#?}", config),
        Err(error) => panic!("{:#?}", error)
     }
 }
