@@ -1,4 +1,4 @@
-# 0.3.3 (unreleased)
+# 0.3.3
 
 * update `from_iter(..)` to accept `std::iter::IntoIterator` types
 
