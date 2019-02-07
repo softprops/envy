@@ -118,7 +118,7 @@ impl<Iter: Iterator<Item = (String, String)>> Iterator for Vars<Iter> {
     fn next(&mut self) -> Option<Self::Item> {
         self.0
             .next()
-            .map(|(k, v)| (VarName(k.clone()), Val(k, v.clone())))
+            .map(|(k, v)| (VarName(k.clone()), Val(k, v)))
     }
 }
 
@@ -137,7 +137,7 @@ macro_rules! forward_parsed_values {
     }
 }
 
-impl<'de, 'a> de::Deserializer<'de> for Val {
+impl<'de> de::Deserializer<'de> for Val {
     type Error = Error;
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
     where
