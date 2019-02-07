@@ -92,7 +92,7 @@ struct Vars<Iter>(Iter)
 where
     Iter: IntoIterator<Item = (String, String)>;
 
-struct Val(String);
+struct Val(String, String);
 
 impl<'de> IntoDeserializer<'de, Error> for Val {
     type Deserializer = Self;
@@ -102,11 +102,23 @@ impl<'de> IntoDeserializer<'de, Error> for Val {
     }
 }
 
+struct VarName(String);
+
+impl<'de> IntoDeserializer<'de, Error> for VarName {
+    type Deserializer = Self;
+
+    fn into_deserializer(self) -> Self::Deserializer {
+        self
+    }
+}
+
 impl<Iter: Iterator<Item = (String, String)>> Iterator for Vars<Iter> {
-    type Item = (Val, Val);
+    type Item = (VarName, Val);
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.0.next().map(|(k, v)| (Val(k.clone()), Val(v.clone())))
+        self.0
+            .next()
+            .map(|(k, v)| (VarName(k.clone()), Val(k, v.clone())))
     }
 }
 
@@ -116,9 +128,9 @@ macro_rules! forward_parsed_values {
             fn $method<V>(self, visitor: V) -> Result<V::Value>
                 where V: de::Visitor<'de>
             {
-                match self.0.parse::<$ty>() {
+                match self.1.parse::<$ty>() {
                     Ok(val) => val.into_deserializer().$method(visitor),
-                    Err(e) => Err(de::Error::custom(e))
+                    Err(e) => Err(de::Error::custom(format_args!("{} while parsing environment variable ${}", e, self.0)))
                 }
             }
         )*
@@ -127,31 +139,22 @@ macro_rules! forward_parsed_values {
 
 impl<'de, 'a> de::Deserializer<'de> for Val {
     type Error = Error;
-    fn deserialize_any<V>(
-        self,
-        visitor: V,
-    ) -> Result<V::Value>
+    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        self.0.into_deserializer().deserialize_any(visitor)
+        self.1.into_deserializer().deserialize_any(visitor)
     }
 
-    fn deserialize_seq<V>(
-        self,
-        visitor: V,
-    ) -> Result<V::Value>
+    fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
-        let values = self.0.split(',').map(|v| Val(v.to_owned()));
+        let values = self.1.split(',').map(|v| Val(self.0.clone(), v.to_owned()));
         SeqDeserializer::new(values).deserialize_seq(visitor)
     }
 
-    fn deserialize_option<V>(
-        self,
-        visitor: V,
-    ) -> Result<V::Value>
+    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
@@ -180,6 +183,23 @@ impl<'de, 'a> de::Deserializer<'de> for Val {
     }
 }
 
+impl<'de> de::Deserializer<'de> for VarName {
+    type Error = Error;
+    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
+    where
+        V: de::Visitor<'de>,
+    {
+        self.0.into_deserializer().deserialize_any(visitor)
+    }
+
+    forward_to_deserialize_any! {
+        char str string unit seq option
+        bytes byte_buf map unit_struct tuple_struct
+        identifier tuple ignored_any newtype_struct enum
+        struct bool u8 u16 u32 u64 i8 i16 i32 i64 f32 f64
+    }
+}
+
 /// A deserializer for env vars
 struct Deserializer<'de, Iter: Iterator<Item = (String, String)>> {
     inner: MapDeserializer<'de, Vars<Iter>, Error>,
@@ -197,20 +217,14 @@ impl<'de, Iter: Iterator<Item = (String, String)>> de::Deserializer<'de>
     for Deserializer<'de, Iter>
 {
     type Error = Error;
-    fn deserialize_any<V>(
-        self,
-        visitor: V,
-    ) -> Result<V::Value>
+    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
         self.deserialize_map(visitor)
     }
 
-    fn deserialize_map<V>(
-        self,
-        visitor: V,
-    ) -> Result<V::Value>
+    fn deserialize_map<V>(self, visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
@@ -260,10 +274,7 @@ impl<'a> Prefixed<'a> {
     }
 
     /// Deserializes a type based on prefixed (String, String) tuples
-    pub fn from_iter<Iter, T>(
-        &self,
-        iter: Iter,
-    ) -> Result<T>
+    pub fn from_iter<Iter, T>(&self, iter: Iter) -> Result<T>
     where
         T: de::DeserializeOwned,
         Iter: IntoIterator<Item = (String, String)>,
@@ -401,7 +412,7 @@ mod tests {
             Ok(_) => panic!("expected failure"),
             Err(e) => assert_eq!(
                 e,
-                Error::Custom(String::from("provided string was not `true` or `false`"))
+                Error::Custom(String::from("provided string was not `true` or `false` while parsing environment variable $baz"))
             ),
         }
     }
