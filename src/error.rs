@@ -27,7 +27,10 @@ impl StdError for Error {
 }
 
 impl fmt::Display for Error {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(
+        &self,
+        fmt: &mut fmt::Formatter,
+    ) -> fmt::Result {
         match *self {
             Error::MissingValue(field) => write!(fmt, "missing value for field {}", field),
             Error::Custom(ref msg) => write!(fmt, "{}", msg),
