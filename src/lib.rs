@@ -116,7 +116,9 @@ impl<Iter: Iterator<Item = (String, String)>> Iterator for Vars<Iter> {
     type Item = (VarName, Val);
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.0.next().map(|(k, v)| (VarName(k.clone()), Val(k, v.clone())))
+        self.0
+            .next()
+            .map(|(k, v)| (VarName(k.clone()), Val(k, v.clone())))
     }
 }
 
@@ -137,20 +139,14 @@ macro_rules! forward_parsed_values {
 
 impl<'de, 'a> de::Deserializer<'de> for Val {
     type Error = Error;
-    fn deserialize_any<V>(
-        self,
-        visitor: V,
-    ) -> Result<V::Value>
+    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
         self.1.into_deserializer().deserialize_any(visitor)
     }
 
-    fn deserialize_seq<V>(
-        self,
-        visitor: V,
-    ) -> Result<V::Value>
+    fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
@@ -158,10 +154,7 @@ impl<'de, 'a> de::Deserializer<'de> for Val {
         SeqDeserializer::new(values).deserialize_seq(visitor)
     }
 
-    fn deserialize_option<V>(
-        self,
-        visitor: V,
-    ) -> Result<V::Value>
+    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
@@ -224,20 +217,14 @@ impl<'de, Iter: Iterator<Item = (String, String)>> de::Deserializer<'de>
     for Deserializer<'de, Iter>
 {
     type Error = Error;
-    fn deserialize_any<V>(
-        self,
-        visitor: V,
-    ) -> Result<V::Value>
+    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
         self.deserialize_map(visitor)
     }
 
-    fn deserialize_map<V>(
-        self,
-        visitor: V,
-    ) -> Result<V::Value>
+    fn deserialize_map<V>(self, visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
@@ -287,10 +274,7 @@ impl<'a> Prefixed<'a> {
     }
 
     /// Deserializes a type based on prefixed (String, String) tuples
-    pub fn from_iter<Iter, T>(
-        &self,
-        iter: Iter,
-    ) -> Result<T>
+    pub fn from_iter<Iter, T>(&self, iter: Iter) -> Result<T>
     where
         T: de::DeserializeOwned,
         Iter: IntoIterator<Item = (String, String)>,
