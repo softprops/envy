@@ -116,7 +116,9 @@ impl<Iter: Iterator<Item = (String, String)>> Iterator for Vars<Iter> {
     type Item = (VarName, Val);
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.0.next().map(|(k, v)| (VarName(k.clone()), Val(k, v)))
+        self.0
+            .next()
+            .map(|(k, v)| (VarName(k.to_lowercase()), Val(k, v)))
     }
 }
 
@@ -270,9 +272,7 @@ where
     T: de::DeserializeOwned,
     Iter: IntoIterator<Item = (String, String)>,
 {
-    T::deserialize(Deserializer::new(
-        iter.into_iter().map(|(k, v)| (k.to_lowercase(), v)),
-    ))
+    T::deserialize(Deserializer::new(iter.into_iter()))
 }
 
 /// A type which filters env vars with a prefix for use as serde field inputs
@@ -431,7 +431,7 @@ mod tests {
             Ok(_) => panic!("expected failure"),
             Err(e) => assert_eq!(
                 e,
-                Error::Custom(String::from("provided string was not `true` or `false` while parsing environment variable $baz"))
+                Error::Custom(String::from("provided string was not `true` or `false` while parsing environment variable $BAZ"))
             ),
         }
     }
