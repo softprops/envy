@@ -28,7 +28,7 @@ install: |
 
 script:
 - |
-  if [[ "$TRAVIS_RUST_VERSION" == nightly-2018-10-16 ]]; then
+  if [[ "$TRAVIS_RUST_VERSION" == nightly ]]; then
     cargo fmt --all -- --check
   fi
 - cargo test
