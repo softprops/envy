@@ -184,10 +184,22 @@ impl<'de> de::Deserializer<'de> for Val {
         f64 => deserialize_f64,
     }
 
+    #[inline]
+    fn deserialize_newtype_struct<V>(
+        self,
+        _: &'static str,
+        visitor: V,
+    ) -> Result<V::Value>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        visitor.visit_newtype_struct(self)
+    }
+
     forward_to_deserialize_any! {
         char str string unit
         bytes byte_buf map unit_struct tuple_struct
-        identifier tuple ignored_any newtype_struct enum
+        identifier tuple ignored_any enum
         struct
     }
 }
@@ -204,10 +216,22 @@ impl<'de> de::Deserializer<'de> for VarName {
         self.0.into_deserializer().deserialize_any(visitor)
     }
 
+    #[inline]
+    fn deserialize_newtype_struct<V>(
+        self,
+        _: &'static str,
+        visitor: V,
+    ) -> Result<V::Value>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        visitor.visit_newtype_struct(self)
+    }
+
     forward_to_deserialize_any! {
         char str string unit seq option
         bytes byte_buf map unit_struct tuple_struct
-        identifier tuple ignored_any newtype_struct enum
+        identifier tuple ignored_any enum
         struct bool u8 u16 u32 u64 i8 i16 i32 i64 f32 f64
     }
 }
@@ -367,6 +391,9 @@ mod tests {
     }
 
     #[derive(Deserialize, Debug, PartialEq)]
+    pub struct CustomNewType(u32);
+
+    #[derive(Deserialize, Debug, PartialEq)]
     pub struct Foo {
         bar: String,
         baz: bool,
@@ -379,6 +406,7 @@ mod tests {
         #[serde(default)]
         size: Size,
         provided: Option<String>,
+        newtype: CustomNewType,
     }
 
     #[test]
@@ -389,6 +417,7 @@ mod tests {
             (String::from("DOOM"), String::from("1,2,3")),
             (String::from("SIZE"), String::from("small")),
             (String::from("PROVIDED"), String::from("test")),
+            (String::from("NEWTYPE"), String::from("42")),
         ];
         match from_iter::<_, Foo>(data) {
             Ok(foo) => assert_eq!(
@@ -402,6 +431,7 @@ mod tests {
                     debug_mode: false,
                     size: Size::Small,
                     provided: Some(String::from("test")),
+                    newtype: CustomNewType(42)
                 }
             ),
             Err(e) => panic!("{:#?}", e),
@@ -444,6 +474,7 @@ mod tests {
             (String::from("APP_DOOM"), String::from("1,2,3")),
             (String::from("APP_SIZE"), String::from("small")),
             (String::from("APP_PROVIDED"), String::from("test")),
+            (String::from("APP_NEWTYPE"), String::from("42")),
         ];
         match prefixed("APP_").from_iter::<_, Foo>(data) {
             Ok(foo) => assert_eq!(
@@ -457,6 +488,7 @@ mod tests {
                     debug_mode: false,
                     size: Size::Small,
                     provided: Some(String::from("test")),
+                    newtype: CustomNewType(42)
                 }
             ),
             Err(e) => panic!("{:#?}", e),
