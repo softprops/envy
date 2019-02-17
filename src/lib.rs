@@ -324,7 +324,7 @@ impl<'a> Prefixed<'a> {
     {
         ::from_iter(iter.into_iter().filter_map(|(k, v)| {
             if k.starts_with(self.0.as_ref()) {
-                Some((k.trim_left_matches(self.0.as_ref()).to_owned(), v))
+                Some((k.trim_start_matches(self.0.as_ref()).to_owned(), v))
             } else {
                 None
             }
