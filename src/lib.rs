@@ -73,13 +73,14 @@ extern crate serde;
 extern crate serde_derive;
 
 // Std
-use std::borrow::Cow;
-use std::env;
-use std::iter::IntoIterator;
+use std::{borrow::Cow, env, iter::IntoIterator};
 
 // Third party
-use serde::de::value::{MapDeserializer, SeqDeserializer};
-use serde::de::{self, IntoDeserializer};
+use serde::de::{
+    self,
+    value::{MapDeserializer, SeqDeserializer},
+    IntoDeserializer,
+};
 
 // Ours
 mod error;

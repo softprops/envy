@@ -1,2 +1,4 @@
-# style function arg lists consistently
+# https://github.com/rust-lang/rustfmt/blob/master/Configurations.md#fn_args_density
 fn_args_density = "Vertical"
+# https://github.com/rust-lang/rustfmt/blob/master/Configurations.md#merge_imports
+merge_imports = true

@@ -1,7 +1,6 @@
 //! Error types
 use serde::de::Error as SerdeError;
-use std::error::Error as StdError;
-use std::fmt;
+use std::{error::Error as StdError, fmt};
 
 /// Types of errors that may result from failed attempts
 /// to deserialize a type from env vars
