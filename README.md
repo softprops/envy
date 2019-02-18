@@ -16,9 +16,7 @@ envy = "0.3"
 A typical envy usage looks like the following. Assuming your rust program looks something like this...
 
 ```rust
-#[macro_use]
-extern crate serde_derive;
-extern crate envy;
+use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 struct Config {
@@ -88,9 +86,7 @@ the `envy::prefixed(prefix)` interface. Asumming your env vars are prefixed with
 the above example may instead look like
 
 ```rust
-#[macro_use]
-extern crate serde_derive;
-extern crate envy;
+use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 struct Config {

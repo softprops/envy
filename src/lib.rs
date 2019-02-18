@@ -1,13 +1,14 @@
-//! Envy is a library for deserializing env vars into typesafe structs
+//! Envy is a library for deserializing environment variables into typesafe structs
 //!
 //! # Examples
 //!
-//! A typical use case for envy is deserializing configuration stored into an env into a struct
+//! A typical usecase for envy is deserializing configuration store in an process' environment into a struct
 //! whose fields map to the names of env vars.
 //!
-//! Serde makes it easy to provide a deserializable struct with the
-//! [serde_derive](https://crates.io/crates/serde_derive) crate. Simply ask for an instance of that
-//! struct from envy's `from_env` function.
+//! Serde makes it easy to provide a deserializable struct with its [deriveable Deserialize](https://serde.rs/derive.html)
+//! procedural macro.
+//!
+//! Simply ask for an instance of that struct from envy's `from_env` function.
 //!
 //! ```no_run
 //! use serde::Deserialize;
@@ -61,21 +62,12 @@
 //! }
 //! ```
 
-// #[macro_use]
-// extern crate serde;
-// #[cfg(test)]
-// #[macro_use]
-// extern crate serde_derive;
-
-// Std
-use std::{borrow::Cow, env, iter::IntoIterator};
-
-// Third party
 use serde::de::{
     self,
     value::{MapDeserializer, SeqDeserializer},
     IntoDeserializer,
 };
+use std::{borrow::Cow, env, iter::IntoIterator};
 
 // Ours
 mod error;

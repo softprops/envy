@@ -1,3 +1,10 @@
+# 0.4.0
+
+* include field name and provided value in error messages [#28](https://github.com/softprops/envy/pull/28) [#36](https://github.com/softprops/envy/pull/36)
+* add support for new type struct types in fields [#32](https://github.com/softprops/envy/pull/32)
+* fix warnings with now deprecated `trim_left_matches` [#34](https://github.com/softprops/envy/pull/34)
+* switch to 2018 edition rust [#37](https://github.com/softprops/envy/pull/37)
+
 # 0.3.3
 
 * update `from_iter(..)` to accept `std::iter::IntoIterator` types
