@@ -8,7 +8,7 @@ Add the following to your `Cargo.toml` file.
 
 ```toml
 [dependencies]
-envy = "0.3"
+envy = "0.4"
 ```
 
 ## 🤸 usage
