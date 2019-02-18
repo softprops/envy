@@ -15,6 +15,8 @@ envy = "0.4"
 
 A typical envy usage looks like the following. Assuming your rust program looks something like this...
 
+> 💡 These examples use Serde's [derive feature](https://serde.rs/derive.html)
+
 ```rust
 use serde::Deserialize;
 
