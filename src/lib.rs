@@ -10,10 +10,7 @@
 //! struct from envy's `from_env` function.
 //!
 //! ```no_run
-//! #[macro_use]
-//! extern crate serde_derive;
-//!
-//! extern crate envy;
+//! use serde::Deserialize;
 //!
 //! #[derive(Deserialize, Debug)]
 //! struct Config {
@@ -39,10 +36,7 @@
 //! If you wish to use enum types use the following
 //!
 //! ```no_run
-//! #[macro_use]
-//! extern crate serde_derive;
-//!
-//! extern crate envy;
+//! use serde::Deserialize;
 //!
 //! #[derive(Deserialize, Debug, PartialEq)]
 //! #[serde(untagged)]
@@ -66,11 +60,12 @@
 //!    }
 //! }
 //! ```
-#[macro_use]
-extern crate serde;
-#[cfg(test)]
-#[macro_use]
-extern crate serde_derive;
+
+// #[macro_use]
+// extern crate serde;
+// #[cfg(test)]
+// #[macro_use]
+// extern crate serde_derive;
 
 // Std
 use std::{borrow::Cow, env, iter::IntoIterator};
@@ -84,7 +79,7 @@ use serde::de::{
 
 // Ours
 mod error;
-pub use error::Error;
+pub use crate::error::Error;
 
 /// A type result type specific to `envy::Errors`
 pub type Result<T> = std::result::Result<T, Error>;
@@ -197,7 +192,7 @@ impl<'de> de::Deserializer<'de> for Val {
         visitor.visit_newtype_struct(self)
     }
 
-    forward_to_deserialize_any! {
+    serde::forward_to_deserialize_any! {
         char str string unit
         bytes byte_buf map unit_struct tuple_struct
         identifier tuple ignored_any enum
@@ -229,7 +224,7 @@ impl<'de> de::Deserializer<'de> for VarName {
         visitor.visit_newtype_struct(self)
     }
 
-    forward_to_deserialize_any! {
+    serde::forward_to_deserialize_any! {
         char str string unit seq option
         bytes byte_buf map unit_struct tuple_struct
         identifier tuple ignored_any enum
@@ -274,7 +269,7 @@ impl<'de, Iter: Iterator<Item = (String, String)>> de::Deserializer<'de>
         visitor.visit_map(self.inner)
     }
 
-    forward_to_deserialize_any! {
+    serde::forward_to_deserialize_any! {
         bool u8 u16 u32 u64 i8 i16 i32 i64 f32 f64 char str string unit seq
         bytes byte_buf unit_struct tuple_struct
         identifier tuple ignored_any option newtype_struct enum
@@ -323,7 +318,7 @@ impl<'a> Prefixed<'a> {
         T: de::DeserializeOwned,
         Iter: IntoIterator<Item = (String, String)>,
     {
-        ::from_iter(iter.into_iter().filter_map(|(k, v)| {
+        crate::from_iter(iter.into_iter().filter_map(|(k, v)| {
             if k.starts_with(self.0.as_ref()) {
                 Some((k.trim_start_matches(self.0.as_ref()).to_owned(), v))
             } else {
@@ -338,10 +333,7 @@ impl<'a> Prefixed<'a> {
 /// # Example
 ///
 /// ```no_run
-/// #[macro_use]
-/// extern crate serde_derive;
-///
-/// extern crate envy;
+/// use serde::Deserialize;
 ///
 /// #[derive(Deserialize, Debug)]
 /// struct Config {
@@ -370,6 +362,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde::Deserialize;
     use std::collections::HashMap;
 
     #[derive(Deserialize, Debug, PartialEq)]

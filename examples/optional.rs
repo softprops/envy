@@ -1,7 +1,4 @@
-#[macro_use]
-extern crate serde_derive;
-
-extern crate envy;
+use serde::Deserialize;
 
 #[derive(Deserialize)]
 struct Config {
