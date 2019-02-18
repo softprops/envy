@@ -130,7 +130,7 @@ macro_rules! forward_parsed_values {
             {
                 match self.1.parse::<$ty>() {
                     Ok(val) => val.into_deserializer().$method(visitor),
-                    Err(e) => Err(de::Error::custom(format_args!("{} while parsing environment variable ${}", e, self.0)))
+                    Err(e) => Err(de::Error::custom(format_args!("{} while parsing value '{}' provided by {}", e, self.1, self.0)))
                 }
             }
         )*
@@ -461,7 +461,7 @@ mod tests {
             Ok(_) => panic!("expected failure"),
             Err(e) => assert_eq!(
                 e,
-                Error::Custom(String::from("provided string was not `true` or `false` while parsing environment variable $BAZ"))
+                Error::Custom(String::from("provided string was not `true` or `false` while parsing value \'notabool\' provided by BAZ"))
             ),
         }
     }
