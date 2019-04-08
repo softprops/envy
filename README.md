@@ -50,9 +50,9 @@ Structs with `Option` type fields will successfully be deserialized when their a
 
 Envy also supports deserializing `Vecs` from comma separated env var values.
 
-Because envy is built on top of serde, you take use all of serde's [attributes](https://serde.rs/attributes.html) to your advantage.
+Because envy is built on top of serde, you can use all of serde's [attributes](https://serde.rs/attributes.html) to your advantage.
 
-For instance let's say you're app requires a field but would like a sensible default when one is not provided.
+For instance let's say your app requires a field but would like a sensible default when one is not provided.
 ```rust
 
 /// provides default value for zoom if ZOOM env var is not set
@@ -112,6 +112,6 @@ the expectation would then be to export the same environment variables prefixed 
 $ APP_FOO=8080 APP_BAR=true APP_BAZ=hello yourapp
 ```
 
-> 👭 Consider this crate a cousin of [envy-store](https://github.com/softprops/envy-store), a crate for deserializing AWS parameter store values into into typesafe structs.
+> 👭 Consider this crate a cousin of [envy-store](https://github.com/softprops/envy-store), a crate for deserializing AWS parameter store values into typesafe structs.
 
 Doug Tangren (softprops) 2016-2019
