@@ -395,6 +395,35 @@ mod tests {
         newtype: CustomNewType,
     }
 
+    #[derive(Deserialize, Debug, PartialEq)]
+    struct Config {
+        #[serde(flatten)]
+        pub subconfig: Subconfig,
+    }
+
+    #[derive(Deserialize, Debug, PartialEq)]
+    struct Subconfig {
+        pub size: usize,
+    }
+
+    #[test]
+    fn deserialize_flatten_from_iter() {
+        let data = vec![
+            (String::from("SIZE"), String::from("1"))
+        ];
+        match from_iter::<_, Config>(data) {
+            Ok(config) => assert_eq!(
+                config,
+                Config {
+                   subconfig: Subconfig {
+                       size: 1
+                   }
+                }
+            ),
+            Err(e) => panic!("{:#?}", e),
+        }
+    }
+
     #[test]
     fn deserialize_from_iter() {
         let data = vec![
