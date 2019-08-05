@@ -30,11 +30,11 @@
 //! ```
 //!
 //! Special treatment is given to collections. For config fields that store a `Vec` of values,
-//! use and env var that uses a comma separated value
+//! use an env var that uses a comma separated value.
 //!
-//! All serde modifier should work as is
+//! All serde modifiers should work as is.
 //!
-//! If you wish to use enum types use the following
+//! If you wish to use enum types use the following:
 //!
 //! ```no_run
 //! use serde::Deserialize;
