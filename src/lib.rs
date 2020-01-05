@@ -410,8 +410,8 @@ mod tests {
             (String::from("NEWTYPE"), String::from("42")),
         ];
         match from_iter::<_, Foo>(data) {
-            Ok(foo) => assert_eq!(
-                foo,
+            Ok(actual) => assert_eq!(
+                actual,
                 Foo {
                     bar: String::from("test"),
                     baz: true,
@@ -467,8 +467,8 @@ mod tests {
             (String::from("APP_NEWTYPE"), String::from("42")),
         ];
         match prefixed("APP_").from_iter::<_, Foo>(data) {
-            Ok(foo) => assert_eq!(
-                foo,
+            Ok(actual) => assert_eq!(
+                actual,
                 Foo {
                     bar: String::from("test"),
                     baz: true,
