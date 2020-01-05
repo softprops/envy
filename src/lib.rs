@@ -40,20 +40,20 @@
 //! #[derive(Deserialize, Debug, PartialEq)]
 //! #[serde(rename_all = "lowercase")]
 //! pub enum Size {
-//!    Small,
-//!    Medium,
-//!    Large
+//!     Small,
+//!     Medium,
+//!     Large,
 //! }
 //!
 //! #[derive(Deserialize, Debug)]
 //! struct Config {
-//!  size: Size,
+//!     size: Size,
 //! }
 //!
 //! // set env var for size as `SIZE=medium`
 //! match envy::from_env::<Config>() {
-//!   Ok(config) => println!("{:#?}", config),
-//!   Err(error) => eprintln!("{:#?}", error)
+//!     Ok(config) => println!("{:#?}", config),
+//!     Err(error) => eprintln!("{:#?}", error),
 //! }
 //! ```
 
