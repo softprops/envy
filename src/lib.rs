@@ -35,7 +35,7 @@
 //! Enums with unit variants can be used as values:
 //!
 //! ```no_run
-//! #use serde::Deserialize;
+//! # use serde::Deserialize;
 //!
 //! #[derive(Deserialize, Debug, PartialEq)]
 //! #[serde(rename_all = "lowercase")]
