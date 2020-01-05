@@ -184,10 +184,22 @@ impl<'de> de::Deserializer<'de> for Val {
         visitor.visit_newtype_struct(self)
     }
 
+    fn deserialize_enum<V>(
+        self,
+        _name: &'static str,
+        _variants: &'static [&'static str],
+        visitor: V,
+    ) -> Result<V::Value>
+    where
+        V: de::Visitor<'de>,
+    {
+        visitor.visit_enum(self.1.into_deserializer())
+    }
+
     serde::forward_to_deserialize_any! {
         char str string unit
         bytes byte_buf map unit_struct tuple_struct
-        identifier tuple ignored_any enum
+        identifier tuple ignored_any
         struct
     }
 }
