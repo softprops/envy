@@ -1,3 +1,7 @@
+# 0.4.1 (unreleased)
+
+* Add support for unit-variant enums as values, without using the `#[serde(field_identifier)]` attribute
+
 # 0.4.0
 
 * include field name and provided value in error messages [#28](https://github.com/softprops/envy/pull/28) [#36](https://github.com/softprops/envy/pull/36)

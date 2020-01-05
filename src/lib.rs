@@ -34,14 +34,13 @@
 //!
 //! All serde modifiers should work as is.
 //!
-//! If you wish to use enum types use the following:
+//! Enums with unit variants can be used as values:
 //!
 //! ```no_run
 //! use serde::Deserialize;
 //!
 //! #[derive(Deserialize, Debug, PartialEq)]
-//! #[serde(untagged)]
-//! #[serde(field_identifier, rename_all = "lowercase")]
+//! #[serde(rename_all = "lowercase")]
 //! pub enum Size {
 //!    Small,
 //!    Medium,
@@ -184,10 +183,22 @@ impl<'de> de::Deserializer<'de> for Val {
         visitor.visit_newtype_struct(self)
     }
 
+    fn deserialize_enum<V>(
+        self,
+        _name: &'static str,
+        _variants: &'static [&'static str],
+        visitor: V,
+    ) -> Result<V::Value>
+    where
+        V: de::Visitor<'de>,
+    {
+        visitor.visit_enum(self.1.into_deserializer())
+    }
+
     serde::forward_to_deserialize_any! {
         char str string unit
         bytes byte_buf map unit_struct tuple_struct
-        identifier tuple ignored_any enum
+        identifier tuple ignored_any
         struct
     }
 }
@@ -358,8 +369,7 @@ mod tests {
     use std::collections::HashMap;
 
     #[derive(Deserialize, Debug, PartialEq)]
-    #[serde(untagged)]
-    #[serde(field_identifier, rename_all = "lowercase")]
+    #[serde(rename_all = "lowercase")]
     pub enum Size {
         Small,
         Medium,
