@@ -34,14 +34,13 @@
 //!
 //! All serde modifiers should work as is.
 //!
-//! If you wish to use enum types use the following:
+//! Enums with unit variants can be used as values:
 //!
 //! ```no_run
 //! use serde::Deserialize;
 //!
 //! #[derive(Deserialize, Debug, PartialEq)]
-//! #[serde(untagged)]
-//! #[serde(field_identifier, rename_all = "lowercase")]
+//! #[serde(rename_all = "lowercase")]
 //! pub enum Size {
 //!    Small,
 //!    Medium,
@@ -370,8 +369,7 @@ mod tests {
     use std::collections::HashMap;
 
     #[derive(Deserialize, Debug, PartialEq)]
-    #[serde(untagged)]
-    #[serde(field_identifier, rename_all = "lowercase")]
+    #[serde(rename_all = "lowercase")]
     pub enum Size {
         Small,
         Medium,
