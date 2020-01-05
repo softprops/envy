@@ -15,17 +15,15 @@
 //!
 //! #[derive(Deserialize, Debug)]
 //! struct Config {
-//!   foo: u16,
-//!   bar: bool,
-//!   baz: String,
-//!   boom: Option<u64>
+//!     foo: u16,
+//!     bar: bool,
+//!     baz: String,
+//!     boom: Option<u64>,
 //! }
 //!
-//! fn main() {
-//!    match envy::from_env::<Config>() {
-//!       Ok(config) => println!("{:#?}", config),
-//!       Err(error) => panic!("{:#?}", error)
-//!    }
+//! match envy::from_env::<Config>() {
+//!     Ok(config) => println!("{:#?}", config),
+//!     Err(error) => eprintln!("{:#?}", error),
 //! }
 //! ```
 //!
@@ -37,7 +35,7 @@
 //! Enums with unit variants can be used as values:
 //!
 //! ```no_run
-//! use serde::Deserialize;
+//! #use serde::Deserialize;
 //!
 //! #[derive(Deserialize, Debug, PartialEq)]
 //! #[serde(rename_all = "lowercase")]
@@ -52,12 +50,10 @@
 //!  size: Size,
 //! }
 //!
-//! fn main() {
-//!    // set env var for size as `SIZE=medium`
-//!    match envy::from_env::<Config>() {
-//!       Ok(config) => println!("{:#?}", config),
-//!       Err(error) => panic!("{:#?}", error)
-//!    }
+//! // set env var for size as `SIZE=medium`
+//! match envy::from_env::<Config>() {
+//!   Ok(config) => println!("{:#?}", config),
+//!   Err(error) => eprintln!("{:#?}", error)
 //! }
 //! ```
 
@@ -340,19 +336,17 @@ impl<'a> Prefixed<'a> {
 ///
 /// #[derive(Deserialize, Debug)]
 /// struct Config {
-///   foo: u16,
-///   bar: bool,
-///   baz: String,
-///   boom: Option<u64>
+///     foo: u16,
+///     bar: bool,
+///     baz: String,
+///     boom: Option<u64>,
 /// }
 ///
-/// fn main() {
-///    // all env variables will be expected to be prefixed with APP_
-///    // i.e. APP_FOO, APP_BAR, ect
-///    match envy::prefixed("APP_").from_env::<Config>() {
-///       Ok(config) => println!("{:#?}", config),
-///       Err(error) => panic!("{:#?}", error)
-///    }
+/// // all env variables will be expected to be prefixed with APP_
+/// // i.e. APP_FOO, APP_BAR, ect
+/// match envy::prefixed("APP_").from_env::<Config>() {
+///     Ok(config) => println!("{:#?}", config),
+///     Err(error) => eprintln!("{:#?}", error),
 /// }
 /// ```
 pub fn prefixed<'a, C>(prefix: C) -> Prefixed<'a>
