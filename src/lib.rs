@@ -494,4 +494,17 @@ mod tests {
             Ok(expected)
         );
     }
+
+    #[test]
+    fn prefixed_doesnt_parse_non_prefixed() {
+        let mut expected = HashMap::new();
+        expected.insert("foo".to_string(), 12);
+        assert_eq!(
+            prefixed("PRE_").from_iter(vec![
+                ("FOO".to_string(), "asd".to_string()),
+                ("PRE_FOO".to_string(), "12".to_string())
+            ]),
+            Ok(expected)
+        );
+    }
 }
