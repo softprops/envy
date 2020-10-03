@@ -62,7 +62,11 @@ use serde::de::{
     value::{MapDeserializer, SeqDeserializer},
     IntoDeserializer,
 };
-use std::{borrow::Cow, env, iter::IntoIterator};
+use std::{
+    borrow::Cow,
+    env,
+    iter::{empty, IntoIterator},
+};
 
 // Ours
 mod error;
@@ -139,8 +143,16 @@ impl<'de> de::Deserializer<'de> for Val {
     where
         V: de::Visitor<'de>,
     {
-        let values = self.1.split(',').map(|v| Val(self.0.clone(), v.to_owned()));
-        SeqDeserializer::new(values).deserialize_seq(visitor)
+        // std::str::split doesn't work as expected for our use case: when we
+        // get an empty string we want to produce an empty Vec, but split would
+        // still yield an iterator with an empty string in it. So we need to
+        // special case empty strings.
+        if self.1.is_empty() {
+            SeqDeserializer::new(empty::<Val>()).deserialize_seq(visitor)
+        } else {
+            let values = self.1.split(',').map(|v| Val(self.0.clone(), v.to_owned()));
+            SeqDeserializer::new(values).deserialize_seq(visitor)
+        }
     }
 
     fn deserialize_option<V>(
@@ -300,7 +312,7 @@ where
 pub struct Prefixed<'a>(Cow<'a, str>);
 
 impl<'a> Prefixed<'a> {
-    /// Deserializes a type based on prefixed env varables
+    /// Deserializes a type based on prefixed env variables
     pub fn from_env<T>(&self) -> Result<T>
     where
         T: de::DeserializeOwned,
@@ -389,6 +401,7 @@ mod tests {
         baz: bool,
         zoom: Option<u16>,
         doom: Vec<u64>,
+        boom: Vec<String>,
         #[serde(default = "default_kaboom")]
         kaboom: u16,
         #[serde(default)]
@@ -405,6 +418,8 @@ mod tests {
             (String::from("BAR"), String::from("test")),
             (String::from("BAZ"), String::from("true")),
             (String::from("DOOM"), String::from("1,2,3")),
+            // Empty string should result in empty vector.
+            (String::from("BOOM"), String::from("")),
             (String::from("SIZE"), String::from("small")),
             (String::from("PROVIDED"), String::from("test")),
             (String::from("NEWTYPE"), String::from("42")),
@@ -417,6 +432,7 @@ mod tests {
                     baz: true,
                     zoom: None,
                     doom: vec![1, 2, 3],
+                    boom: vec![],
                     kaboom: 8080,
                     debug_mode: false,
                     size: Size::Small,
@@ -461,7 +477,8 @@ mod tests {
         let data = vec![
             (String::from("APP_BAR"), String::from("test")),
             (String::from("APP_BAZ"), String::from("true")),
-            (String::from("APP_DOOM"), String::from("1,2,3")),
+            (String::from("APP_DOOM"), String::from("")),
+            (String::from("APP_BOOM"), String::from("4,5")),
             (String::from("APP_SIZE"), String::from("small")),
             (String::from("APP_PROVIDED"), String::from("test")),
             (String::from("APP_NEWTYPE"), String::from("42")),
@@ -473,7 +490,8 @@ mod tests {
                     bar: String::from("test"),
                     baz: true,
                     zoom: None,
-                    doom: vec![1, 2, 3],
+                    doom: vec![],
+                    boom: vec!["4".to_string(), "5".to_string()],
                     kaboom: 8080,
                     debug_mode: false,
                     size: Size::Small,
