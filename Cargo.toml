@@ -19,6 +19,7 @@ coveralls = { repository = "softprops/envy" }
 travis-ci = { repository = "softprops/envy" }
 
 [dependencies]
+regex = "1.4.1"
 serde = "1.0"
 
 [dev-dependencies]
