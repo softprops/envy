@@ -201,13 +201,11 @@ impl<'de> de::Deserializer<'de> for Val {
     where
         V: de::Visitor<'de>,
     {
-        let hashmap_reg = Regex::new(r#"(?P<key>[^{:]+):(?P<value>[^,}]*),?"#).unwrap();
-        if self.1.strip_prefix('{').is_none()
-            || self.1.strip_suffix('}').is_none()
-            || !hashmap_reg.is_match(&self.1)
+        let hashmap_reg = Regex::new(r#"(?P<key>[^{=]+)=(?P<value>[^,}]*),?"#).unwrap();
+        if !self.1.is_empty() && !hashmap_reg.is_match(&self.1)
         {
             return Err(Error::Custom(format!(
-                "{} is malformated. Must start with '{{' and end with '}}'",
+                "{} is malformated for a map (must be 'key=value,key2=value2')",
                 self.0
             )));
         }
@@ -495,7 +493,7 @@ mod tests {
             (String::from("APP_NEWTYPE"), String::from("42")),
             (
                 String::from("APP_MAP"),
-                String::from("{key:value, key2: value2}"),
+                String::from("key=value, key2=value2"),
             ),
         ];
         let mut map = HashMap::new();
