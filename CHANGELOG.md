@@ -1,3 +1,7 @@
+# 0.4.2
+
+* Correctly deserialize empty strings into empty sequence [#51](https://github.com/softprops/envy/pull/51)
+
 # 0.4.1
 
 * Add support for unit-variant enums as values, without using the `#[serde(field_identifier)]` attribute [#46](https://github.com/softprops/envy/pull/46)
