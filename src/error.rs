@@ -10,20 +10,7 @@ pub enum Error {
     Custom(String),
 }
 
-impl StdError for Error {
-    fn description(&self) -> &str {
-        match *self {
-            Error::MissingValue(_) => "missing value",
-            Error::Custom(_) => "custom error",
-        }
-    }
-
-    fn cause(&self) -> Option<&dyn StdError> {
-        match *self {
-            _ => None,
-        }
-    }
-}
+impl StdError for Error {}
 
 impl fmt::Display for Error {
     fn fmt(
@@ -67,15 +54,5 @@ mod tests {
         );
 
         assert_eq!(format!("{}", Error::Custom("whoops".into())), "whoops")
-    }
-
-    #[test]
-    fn error_description() {
-        assert_eq!(
-            Error::MissingValue("foo_bar").description(),
-            "missing value"
-        );
-
-        assert_eq!(Error::Custom("whoops".into()).description(), "custom error")
     }
 }
