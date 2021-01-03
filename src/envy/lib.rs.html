@@ -1,4 +1,7 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../envy/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
+<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../envy/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><span class="help-button">?</span>
+                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -508,6 +511,24 @@
 <span id="508">508</span>
 <span id="509">509</span>
 <span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Envy is a library for deserializing environment variables into typesafe structs</span>
 <span class="doccomment">//!</span>
@@ -573,7 +594,11 @@
     <span class="ident">value</span>::{<span class="ident">MapDeserializer</span>, <span class="ident">SeqDeserializer</span>},
     <span class="ident">IntoDeserializer</span>,
 };
-<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">borrow</span>::<span class="ident">Cow</span>, <span class="ident">env</span>, <span class="ident">iter</span>::<span class="ident">IntoIterator</span>};
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">borrow</span>::<span class="ident">Cow</span>,
+    <span class="ident">env</span>,
+    <span class="ident">iter</span>::{<span class="ident">empty</span>, <span class="ident">IntoIterator</span>},
+};
 
 <span class="comment">// Ours</span>
 <span class="kw">mod</span> <span class="ident">error</span>;
@@ -650,8 +675,16 @@
     <span class="kw">where</span>
         <span class="ident">V</span>: <span class="ident">de</span>::<span class="ident">Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
     {
-        <span class="kw">let</span> <span class="ident">values</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">1</span>.<span class="ident">split</span>(<span class="string">&#39;,&#39;</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="ident">Val</span>(<span class="self">self</span>.<span class="number">0</span>.<span class="ident">clone</span>(), <span class="ident">v</span>.<span class="ident">to_owned</span>()));
-        <span class="ident">SeqDeserializer</span>::<span class="ident">new</span>(<span class="ident">values</span>).<span class="ident">deserialize_seq</span>(<span class="ident">visitor</span>)
+        <span class="comment">// std::str::split doesn&#39;t work as expected for our use case: when we</span>
+        <span class="comment">// get an empty string we want to produce an empty Vec, but split would</span>
+        <span class="comment">// still yield an iterator with an empty string in it. So we need to</span>
+        <span class="comment">// special case empty strings.</span>
+        <span class="kw">if</span> <span class="self">self</span>.<span class="number">1</span>.<span class="ident">is_empty</span>() {
+            <span class="ident">SeqDeserializer</span>::<span class="ident">new</span>(<span class="ident">empty</span>::<span class="op">&lt;</span><span class="ident">Val</span><span class="op">&gt;</span>()).<span class="ident">deserialize_seq</span>(<span class="ident">visitor</span>)
+        } <span class="kw">else</span> {
+            <span class="kw">let</span> <span class="ident">values</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">1</span>.<span class="ident">split</span>(<span class="string">&#39;,&#39;</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="ident">Val</span>(<span class="self">self</span>.<span class="number">0</span>.<span class="ident">clone</span>(), <span class="ident">v</span>.<span class="ident">to_owned</span>()));
+            <span class="ident">SeqDeserializer</span>::<span class="ident">new</span>(<span class="ident">values</span>).<span class="ident">deserialize_seq</span>(<span class="ident">visitor</span>)
+        }
     }
 
     <span class="kw">fn</span> <span class="ident">deserialize_option</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(
@@ -811,7 +844,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Prefixed</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">str</span><span class="op">&gt;</span>);
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Prefixed</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="doccomment">/// Deserializes a type based on prefixed env varables</span>
+    <span class="doccomment">/// Deserializes a type based on prefixed env variables</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_env</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">T</span>: <span class="ident">de</span>::<span class="ident">DeserializeOwned</span>,
@@ -900,6 +933,7 @@
         <span class="ident">baz</span>: <span class="ident">bool</span>,
         <span class="ident">zoom</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span>,
         <span class="ident">doom</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
+        <span class="ident">boom</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
         <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span> <span class="op">=</span> <span class="string">&quot;default_kaboom&quot;</span>)]</span>
         <span class="ident">kaboom</span>: <span class="ident">u16</span>,
         <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
@@ -916,6 +950,8 @@
             (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;BAR&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>)),
             (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;BAZ&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;true&quot;</span>)),
             (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;DOOM&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;1,2,3&quot;</span>)),
+            <span class="comment">// Empty string should result in empty vector.</span>
+            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;BOOM&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;&quot;</span>)),
             (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;SIZE&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;small&quot;</span>)),
             (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;PROVIDED&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>)),
             (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;NEWTYPE&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;42&quot;</span>)),
@@ -928,6 +964,7 @@
                     <span class="ident">baz</span>: <span class="bool-val">true</span>,
                     <span class="ident">zoom</span>: <span class="prelude-val">None</span>,
                     <span class="ident">doom</span>: <span class="macro">vec</span><span class="macro">!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],
+                    <span class="ident">boom</span>: <span class="macro">vec</span><span class="macro">!</span>[],
                     <span class="ident">kaboom</span>: <span class="number">8080</span>,
                     <span class="ident">debug_mode</span>: <span class="bool-val">false</span>,
                     <span class="ident">size</span>: <span class="ident">Size</span>::<span class="ident">Small</span>,
@@ -972,7 +1009,8 @@
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
             (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;APP_BAR&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>)),
             (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;APP_BAZ&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;true&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;APP_DOOM&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;1,2,3&quot;</span>)),
+            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;APP_DOOM&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;&quot;</span>)),
+            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;APP_BOOM&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;4,5&quot;</span>)),
             (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;APP_SIZE&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;small&quot;</span>)),
             (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;APP_PROVIDED&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>)),
             (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;APP_NEWTYPE&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;42&quot;</span>)),
@@ -984,7 +1022,8 @@
                     <span class="ident">bar</span>: <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>),
                     <span class="ident">baz</span>: <span class="bool-val">true</span>,
                     <span class="ident">zoom</span>: <span class="prelude-val">None</span>,
-                    <span class="ident">doom</span>: <span class="macro">vec</span><span class="macro">!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],
+                    <span class="ident">doom</span>: <span class="macro">vec</span><span class="macro">!</span>[],
+                    <span class="ident">boom</span>: <span class="macro">vec</span><span class="macro">!</span>[<span class="string">&quot;4&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;5&quot;</span>.<span class="ident">to_string</span>()],
                     <span class="ident">kaboom</span>: <span class="number">8080</span>,
                     <span class="ident">debug_mode</span>: <span class="bool-val">false</span>,
                     <span class="ident">size</span>: <span class="ident">Size</span>::<span class="ident">Small</span>,
@@ -1020,4 +1059,4 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "envy";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "envy";</script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
