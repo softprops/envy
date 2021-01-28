@@ -150,7 +150,10 @@ impl<'de> de::Deserializer<'de> for Val {
         if self.1.is_empty() {
             SeqDeserializer::new(empty::<Val>()).deserialize_seq(visitor)
         } else {
-            let values = self.1.split(',').map(|v| Val(self.0.clone(), v.to_owned()));
+            let values = self
+                .1
+                .split(',')
+                .map(|v| Val(self.0.clone(), v.trim().to_owned()));
             SeqDeserializer::new(values).deserialize_seq(visitor)
         }
     }
@@ -417,7 +420,7 @@ mod tests {
         let data = vec![
             (String::from("BAR"), String::from("test")),
             (String::from("BAZ"), String::from("true")),
-            (String::from("DOOM"), String::from("1,2,3")),
+            (String::from("DOOM"), String::from("1, 2, 3 ")),
             // Empty string should result in empty vector.
             (String::from("BOOM"), String::from("")),
             (String::from("SIZE"), String::from("small")),
