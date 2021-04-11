@@ -303,7 +303,10 @@ where
     T: de::DeserializeOwned,
     Iter: IntoIterator<Item = (String, String)>,
 {
-    T::deserialize(Deserializer::new(iter.into_iter()))
+    T::deserialize(Deserializer::new(iter.into_iter())).map_err(|error| match error {
+        Error::MissingValue(value) => Error::MissingValue(value.to_uppercase()),
+        _ => error,
+    })
 }
 
 /// A type which filters env vars with a prefix for use as serde field inputs
@@ -336,6 +339,12 @@ impl<'a> Prefixed<'a> {
                 None
             }
         }))
+        .map_err(|error| match error {
+            Error::MissingValue(value) => Error::MissingValue(
+                format!("{prefix}{value}", prefix = self.0, value = value).to_uppercase(),
+            ),
+            _ => error,
+        })
     }
 }
 
@@ -452,7 +461,20 @@ mod tests {
         ];
         match from_iter::<_, Foo>(data) {
             Ok(_) => panic!("expected failure"),
-            Err(e) => assert_eq!(e, Error::MissingValue("doom")),
+            Err(e) => assert_eq!(e, Error::MissingValue("DOOM".into())),
+        }
+    }
+
+    #[test]
+    fn prefixed_fails_with_missing_value() {
+        let data = vec![
+            (String::from("PREFIX_BAR"), String::from("test")),
+            (String::from("PREFIX_BAZ"), String::from("true")),
+        ];
+
+        match prefixed("PREFIX_").from_iter::<_, Foo>(data) {
+            Ok(_) => panic!("expected failure"),
+            Err(e) => assert_eq!(e, Error::MissingValue("PREFIX_DOOM".into())),
         }
     }
 
