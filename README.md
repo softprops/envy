@@ -56,7 +56,7 @@ For instance let's say your app requires a field but would like a sensible defau
 ```rust
 
 /// provides default value for zoom if ZOOM env var is not set
-fn default_zoom() -> {
+fn default_zoom() -> u16 {
   32
 }
 
