@@ -57,6 +57,7 @@
 //! }
 //! ```
 
+use regex::Regex;
 use serde::de::{
     self,
     value::{MapDeserializer, SeqDeserializer},
@@ -79,6 +80,7 @@ struct Vars<Iter>(Iter)
 where
     Iter: IntoIterator<Item = (String, String)>;
 
+#[derive(Debug)]
 struct Val(String, String);
 
 impl<'de> IntoDeserializer<'de, Error> for Val {
@@ -89,6 +91,7 @@ impl<'de> IntoDeserializer<'de, Error> for Val {
     }
 }
 
+#[derive(Debug)]
 struct VarName(String);
 
 impl<'de> IntoDeserializer<'de, Error> for VarName {
@@ -203,9 +206,35 @@ impl<'de> de::Deserializer<'de> for Val {
         visitor.visit_enum(self.1.into_deserializer())
     }
 
+    fn deserialize_map<V>(
+        self,
+        visitor: V,
+    ) -> Result<V::Value>
+    where
+        V: de::Visitor<'de>,
+    {
+        let hashmap_reg = Regex::new(r#"(?P<key>[^{=]+)=(?P<value>[^,}]*),?"#).unwrap();
+        if !self.1.is_empty() && !hashmap_reg.is_match(&self.1)
+        {
+            return Err(Error::Custom(format!(
+                "{} is malformated for a map (must be 'key=value,key2=value2')",
+                self.0
+            )));
+        }
+
+        let map = hashmap_reg.captures_iter(&self.1).map(|ref caps| {
+            (
+                caps["key"].trim().to_string(),
+                caps["value"].trim().to_string(),
+            )
+        });
+
+        visitor.visit_map(MapDeserializer::new(map))
+    }
+
     serde::forward_to_deserialize_any! {
         char str string unit
-        bytes byte_buf map unit_struct tuple_struct
+        bytes byte_buf unit_struct tuple_struct
         identifier tuple ignored_any
         struct
     }
@@ -237,12 +266,11 @@ impl<'de> de::Deserializer<'de> for VarName {
 
     serde::forward_to_deserialize_any! {
         char str string unit seq option
-        bytes byte_buf map unit_struct tuple_struct
-        identifier tuple ignored_any enum
+        bytes byte_buf unit_struct tuple_struct
+        identifier tuple ignored_any enum map
         struct bool u8 u16 u32 u64 i8 i16 i32 i64 f32 f64
     }
 }
-
 /// A deserializer for env vars
 struct Deserializer<'de, Iter: Iterator<Item = (String, String)>> {
     inner: MapDeserializer<'de, Vars<Iter>, Error>,
@@ -282,9 +310,8 @@ impl<'de, Iter: Iterator<Item = (String, String)>> de::Deserializer<'de>
 
     serde::forward_to_deserialize_any! {
         bool u8 u16 u32 u64 i8 i16 i32 i64 f32 f64 char str string unit seq
-        bytes byte_buf unit_struct tuple_struct
+        bytes byte_buf unit_struct tuple_struct struct
         identifier tuple ignored_any option newtype_struct enum
-        struct
     }
 }
 
@@ -329,13 +356,10 @@ impl<'a> Prefixed<'a> {
         T: de::DeserializeOwned,
         Iter: IntoIterator<Item = (String, String)>,
     {
-        crate::from_iter(iter.into_iter().filter_map(|(k, v)| {
-            if k.starts_with(self.0.as_ref()) {
-                Some((k.trim_start_matches(self.0.as_ref()).to_owned(), v))
-            } else {
-                None
-            }
-        }))
+        crate::from_iter(
+            iter.into_iter()
+                .filter_map(|(k, v)| k.strip_prefix(self.0.as_ref()).map(|k| (k.to_string(), v))),
+        )
     }
 }
 
@@ -410,6 +434,7 @@ mod tests {
         size: Size,
         provided: Option<String>,
         newtype: CustomNewType,
+        map: Option<HashMap<String, String>>,
     }
 
     #[test]
@@ -437,7 +462,8 @@ mod tests {
                     debug_mode: false,
                     size: Size::Small,
                     provided: Some(String::from("test")),
-                    newtype: CustomNewType(42)
+                    newtype: CustomNewType(42),
+                    map: None,
                 }
             ),
             Err(e) => panic!("{:#?}", e),
@@ -482,7 +508,15 @@ mod tests {
             (String::from("APP_SIZE"), String::from("small")),
             (String::from("APP_PROVIDED"), String::from("test")),
             (String::from("APP_NEWTYPE"), String::from("42")),
+            (
+                String::from("APP_MAP"),
+                String::from("key=value, key2=value2"),
+            ),
         ];
+        let mut map = HashMap::new();
+        map.insert(String::from("key"), String::from("value"));
+        map.insert(String::from("key2"), String::from("value2"));
+
         match prefixed("APP_").from_iter::<_, Foo>(data) {
             Ok(actual) => assert_eq!(
                 actual,
@@ -496,7 +530,8 @@ mod tests {
                     debug_mode: false,
                     size: Size::Small,
                     provided: Some(String::from("test")),
-                    newtype: CustomNewType(42)
+                    newtype: CustomNewType(42),
+                    map: Some(map)
                 }
             ),
             Err(e) => panic!("{:#?}", e),
