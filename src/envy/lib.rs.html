@@ -1,7 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../envy/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../envy/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -551,8 +548,10 @@
 <span id="548">548</span>
 <span id="549">549</span>
 <span id="550">550</span>
-</pre><div class="example-wrap"><pre class="rust ">
-<span class="doccomment">//! Envy is a library for deserializing environment variables into typesafe structs</span>
+<span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+</pre><pre class="rust"><code><span class="doccomment">//! Envy is a library for deserializing environment variables into typesafe structs</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # Examples</span>
 <span class="doccomment">//!</span>
@@ -611,23 +610,23 @@
 <span class="doccomment">//! }</span>
 <span class="doccomment">//! ```</span>
 
-<span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">de</span>::{
+<span class="kw">use</span> <span class="ident">serde::de</span>::{
     <span class="self">self</span>,
     <span class="ident">value</span>::{<span class="ident">MapDeserializer</span>, <span class="ident">SeqDeserializer</span>},
     <span class="ident">IntoDeserializer</span>,
 };
 <span class="kw">use</span> <span class="ident">std</span>::{
-    <span class="ident">borrow</span>::<span class="ident">Cow</span>,
+    <span class="ident">borrow::Cow</span>,
     <span class="ident">env</span>,
     <span class="ident">iter</span>::{<span class="ident">empty</span>, <span class="ident">IntoIterator</span>},
 };
 
 <span class="comment">// Ours</span>
 <span class="kw">mod</span> <span class="ident">error</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::<span class="ident">Error</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::error::Error</span>;
 
 <span class="doccomment">/// A type result type specific to `envy::Errors`</span>
-<span class="kw">pub</span> <span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">result</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+<span class="kw">pub</span> <span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
 
 <span class="kw">struct</span> <span class="ident">Vars</span><span class="op">&lt;</span><span class="ident">Iter</span><span class="op">&gt;</span>(<span class="ident">Iter</span>)
 <span class="kw">where</span>
@@ -638,7 +637,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">IntoDeserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span>, <span class="ident">Error</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Val</span> {
     <span class="kw">type</span> <span class="ident">Deserializer</span> <span class="op">=</span> <span class="self">Self</span>;
 
-    <span class="kw">fn</span> <span class="ident">into_deserializer</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Deserializer</span> {
+    <span class="kw">fn</span> <span class="ident">into_deserializer</span>(<span class="self">self</span>) -&gt; <span class="ident"><span class="self">Self</span>::Deserializer</span> {
         <span class="self">self</span>
     }
 }
@@ -648,7 +647,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">IntoDeserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span>, <span class="ident">Error</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">VarName</span> {
     <span class="kw">type</span> <span class="ident">Deserializer</span> <span class="op">=</span> <span class="self">Self</span>;
 
-    <span class="kw">fn</span> <span class="ident">into_deserializer</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Deserializer</span> {
+    <span class="kw">fn</span> <span class="ident">into_deserializer</span>(<span class="self">self</span>) -&gt; <span class="ident"><span class="self">Self</span>::Deserializer</span> {
         <span class="self">self</span>
     }
 }
@@ -656,36 +655,36 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Iter</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">String</span>, <span class="ident">String</span>)<span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">Vars</span><span class="op">&lt;</span><span class="ident">Iter</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> (<span class="ident">VarName</span>, <span class="ident">Val</span>);
 
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Item</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Item</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="number">0</span>
             .<span class="ident">next</span>()
             .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">k</span>, <span class="ident">v</span>)<span class="op">|</span> (<span class="ident">VarName</span>(<span class="ident">k</span>.<span class="ident">to_lowercase</span>()), <span class="ident">Val</span>(<span class="ident">k</span>, <span class="ident">v</span>)))
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">forward_parsed_values</span> {
-    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>:<span class="ident">ident</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span>:<span class="ident">ident</span>,)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
+<span class="macro">macro_rules!</span> <span class="ident">forward_parsed_values</span> {
+    ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>:<span class="ident">ident</span> =&gt; <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span>:<span class="ident">ident</span>,)<span class="kw-2">*</span>) =&gt; {
         $(
-            <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V</span>::<span class="ident">Value</span><span class="op">&gt;</span>
-                <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de</span>::<span class="ident">Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+            <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">visitor</span>: <span class="ident">V</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
+                <span class="kw">where</span> <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
             {
                 <span class="kw">match</span> <span class="self">self</span>.<span class="number">1</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span><span class="op">&gt;</span>() {
-                    <span class="prelude-val">Ok</span>(<span class="ident">val</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">val</span>.<span class="ident">into_deserializer</span>().<span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span>(<span class="ident">visitor</span>),
-                    <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">de</span>::<span class="ident">Error</span>::<span class="ident">custom</span>(<span class="macro">format_args</span><span class="macro">!</span>(<span class="string">&quot;{} while parsing value &#39;{}&#39; provided by {}&quot;</span>, <span class="ident">e</span>, <span class="self">self</span>.<span class="number">1</span>, <span class="self">self</span>.<span class="number">0</span>)))
+                    <span class="prelude-val">Ok</span>(<span class="ident">val</span>) =&gt; <span class="ident">val</span>.<span class="ident">into_deserializer</span>().<span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span>(<span class="ident">visitor</span>),
+                    <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; <span class="prelude-val">Err</span>(<span class="ident">de::Error::custom</span>(<span class="macro">format_args!</span>(<span class="string">&quot;{} while parsing value &#39;{}&#39; provided by {}&quot;</span>, <span class="ident">e</span>, <span class="self">self</span>.<span class="number">1</span>, <span class="self">self</span>.<span class="number">0</span>)))
                 }
             }
         )<span class="op">*</span>
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">de</span>::<span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Val</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">de::Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Val</span> {
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">Error</span>;
     <span class="kw">fn</span> <span class="ident">deserialize_any</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(
         <span class="self">self</span>,
         <span class="ident">visitor</span>: <span class="ident">V</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V</span>::<span class="ident">Value</span><span class="op">&gt;</span>
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">V</span>: <span class="ident">de</span>::<span class="ident">Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
+        <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
     {
         <span class="self">self</span>.<span class="number">1</span>.<span class="ident">into_deserializer</span>().<span class="ident">deserialize_any</span>(<span class="ident">visitor</span>)
     }
@@ -693,44 +692,47 @@
     <span class="kw">fn</span> <span class="ident">deserialize_seq</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(
         <span class="self">self</span>,
         <span class="ident">visitor</span>: <span class="ident">V</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V</span>::<span class="ident">Value</span><span class="op">&gt;</span>
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">V</span>: <span class="ident">de</span>::<span class="ident">Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
+        <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
     {
         <span class="comment">// std::str::split doesn&#39;t work as expected for our use case: when we</span>
         <span class="comment">// get an empty string we want to produce an empty Vec, but split would</span>
         <span class="comment">// still yield an iterator with an empty string in it. So we need to</span>
         <span class="comment">// special case empty strings.</span>
         <span class="kw">if</span> <span class="self">self</span>.<span class="number">1</span>.<span class="ident">is_empty</span>() {
-            <span class="ident">SeqDeserializer</span>::<span class="ident">new</span>(<span class="ident">empty</span>::<span class="op">&lt;</span><span class="ident">Val</span><span class="op">&gt;</span>()).<span class="ident">deserialize_seq</span>(<span class="ident">visitor</span>)
+            <span class="ident">SeqDeserializer::new</span>(<span class="ident">empty</span>::<span class="op">&lt;</span><span class="ident">Val</span><span class="op">&gt;</span>()).<span class="ident">deserialize_seq</span>(<span class="ident">visitor</span>)
         } <span class="kw">else</span> {
-            <span class="kw">let</span> <span class="ident">values</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">1</span>.<span class="ident">split</span>(<span class="string">&#39;,&#39;</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="ident">Val</span>(<span class="self">self</span>.<span class="number">0</span>.<span class="ident">clone</span>(), <span class="ident">v</span>.<span class="ident">to_owned</span>()));
-            <span class="ident">SeqDeserializer</span>::<span class="ident">new</span>(<span class="ident">values</span>).<span class="ident">deserialize_seq</span>(<span class="ident">visitor</span>)
+            <span class="kw">let</span> <span class="ident">values</span> <span class="op">=</span> <span class="self">self</span>
+                .<span class="number">1</span>
+                .<span class="ident">split</span>(<span class="string">&#39;,&#39;</span>)
+                .<span class="ident">map</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="ident">Val</span>(<span class="self">self</span>.<span class="number">0</span>.<span class="ident">clone</span>(), <span class="ident">v</span>.<span class="ident">trim</span>().<span class="ident">to_owned</span>()));
+            <span class="ident">SeqDeserializer::new</span>(<span class="ident">values</span>).<span class="ident">deserialize_seq</span>(<span class="ident">visitor</span>)
         }
     }
 
     <span class="kw">fn</span> <span class="ident">deserialize_option</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(
         <span class="self">self</span>,
         <span class="ident">visitor</span>: <span class="ident">V</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V</span>::<span class="ident">Value</span><span class="op">&gt;</span>
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">V</span>: <span class="ident">de</span>::<span class="ident">Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
+        <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
     {
         <span class="ident">visitor</span>.<span class="ident">visit_some</span>(<span class="self">self</span>)
     }
 
-    <span class="macro">forward_parsed_values</span><span class="macro">!</span> {
-        <span class="ident">bool</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">deserialize_bool</span>,
-        <span class="ident">u8</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">deserialize_u8</span>,
-        <span class="ident">u16</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">deserialize_u16</span>,
-        <span class="ident">u32</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">deserialize_u32</span>,
-        <span class="ident">u64</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">deserialize_u64</span>,
-        <span class="ident">i8</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">deserialize_i8</span>,
-        <span class="ident">i16</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">deserialize_i16</span>,
-        <span class="ident">i32</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">deserialize_i32</span>,
-        <span class="ident">i64</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">deserialize_i64</span>,
-        <span class="ident">f32</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">deserialize_f32</span>,
-        <span class="ident">f64</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">deserialize_f64</span>,
+    <span class="macro">forward_parsed_values!</span> {
+        <span class="ident">bool</span> =&gt; <span class="ident">deserialize_bool</span>,
+        <span class="ident">u8</span> =&gt; <span class="ident">deserialize_u8</span>,
+        <span class="ident">u16</span> =&gt; <span class="ident">deserialize_u16</span>,
+        <span class="ident">u32</span> =&gt; <span class="ident">deserialize_u32</span>,
+        <span class="ident">u64</span> =&gt; <span class="ident">deserialize_u64</span>,
+        <span class="ident">i8</span> =&gt; <span class="ident">deserialize_i8</span>,
+        <span class="ident">i16</span> =&gt; <span class="ident">deserialize_i16</span>,
+        <span class="ident">i32</span> =&gt; <span class="ident">deserialize_i32</span>,
+        <span class="ident">i64</span> =&gt; <span class="ident">deserialize_i64</span>,
+        <span class="ident">f32</span> =&gt; <span class="ident">deserialize_f32</span>,
+        <span class="ident">f64</span> =&gt; <span class="ident">deserialize_f64</span>,
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -738,9 +740,9 @@
         <span class="self">self</span>,
         <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
         <span class="ident">visitor</span>: <span class="ident">V</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V</span>::<span class="ident">Value</span><span class="op">&gt;</span>
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">V</span>: <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
+        <span class="ident">V</span>: <span class="ident">serde::de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
     {
         <span class="ident">visitor</span>.<span class="ident">visit_newtype_struct</span>(<span class="self">self</span>)
     }
@@ -750,14 +752,14 @@
         <span class="ident">_name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
         <span class="ident">_variants</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> [<span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>],
         <span class="ident">visitor</span>: <span class="ident">V</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V</span>::<span class="ident">Value</span><span class="op">&gt;</span>
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">V</span>: <span class="ident">de</span>::<span class="ident">Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
+        <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
     {
         <span class="ident">visitor</span>.<span class="ident">visit_enum</span>(<span class="self">self</span>.<span class="number">1</span>.<span class="ident">into_deserializer</span>())
     }
 
-    <span class="ident">serde</span>::<span class="macro">forward_to_deserialize_any</span><span class="macro">!</span> {
+    <span class="macro">serde::forward_to_deserialize_any!</span> {
         <span class="ident">char</span> <span class="ident">str</span> <span class="ident">string</span> <span class="ident">unit</span>
         <span class="ident">bytes</span> <span class="ident">byte_buf</span> <span class="ident">map</span> <span class="ident">unit_struct</span> <span class="ident">tuple_struct</span>
         <span class="ident">identifier</span> <span class="ident">tuple</span> <span class="ident">ignored_any</span>
@@ -765,14 +767,14 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">de</span>::<span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">VarName</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">de::Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">VarName</span> {
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">Error</span>;
     <span class="kw">fn</span> <span class="ident">deserialize_any</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(
         <span class="self">self</span>,
         <span class="ident">visitor</span>: <span class="ident">V</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V</span>::<span class="ident">Value</span><span class="op">&gt;</span>
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">V</span>: <span class="ident">de</span>::<span class="ident">Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
+        <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
     {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">into_deserializer</span>().<span class="ident">deserialize_any</span>(<span class="ident">visitor</span>)
     }
@@ -782,14 +784,14 @@
         <span class="self">self</span>,
         <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
         <span class="ident">visitor</span>: <span class="ident">V</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V</span>::<span class="ident">Value</span><span class="op">&gt;</span>
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">V</span>: <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
+        <span class="ident">V</span>: <span class="ident">serde::de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
     {
         <span class="ident">visitor</span>.<span class="ident">visit_newtype_struct</span>(<span class="self">self</span>)
     }
 
-    <span class="ident">serde</span>::<span class="macro">forward_to_deserialize_any</span><span class="macro">!</span> {
+    <span class="macro">serde::forward_to_deserialize_any!</span> {
         <span class="ident">char</span> <span class="ident">str</span> <span class="ident">string</span> <span class="ident">unit</span> <span class="ident">seq</span> <span class="ident">option</span>
         <span class="ident">bytes</span> <span class="ident">byte_buf</span> <span class="ident">map</span> <span class="ident">unit_struct</span> <span class="ident">tuple_struct</span>
         <span class="ident">identifier</span> <span class="ident">tuple</span> <span class="ident">ignored_any</span> <span class="kw">enum</span>
@@ -803,23 +805,23 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span>, <span class="ident">Iter</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">String</span>, <span class="ident">String</span>)<span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span>, <span class="ident">Iter</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">vars</span>: <span class="ident">Iter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">vars</span>: <span class="ident">Iter</span>) -&gt; <span class="self">Self</span> {
         <span class="ident">Deserializer</span> {
-            <span class="ident">inner</span>: <span class="ident">MapDeserializer</span>::<span class="ident">new</span>(<span class="ident">Vars</span>(<span class="ident">vars</span>)),
+            <span class="ident">inner</span>: <span class="ident">MapDeserializer::new</span>(<span class="ident">Vars</span>(<span class="ident">vars</span>)),
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span>, <span class="ident">Iter</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">String</span>, <span class="ident">String</span>)<span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">de</span>::<span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span>, <span class="ident">Iter</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">String</span>, <span class="ident">String</span>)<span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">de::Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
     <span class="kw">for</span> <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span>, <span class="ident">Iter</span><span class="op">&gt;</span>
 {
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">Error</span>;
     <span class="kw">fn</span> <span class="ident">deserialize_any</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(
         <span class="self">self</span>,
         <span class="ident">visitor</span>: <span class="ident">V</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V</span>::<span class="ident">Value</span><span class="op">&gt;</span>
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">V</span>: <span class="ident">de</span>::<span class="ident">Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
+        <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
     {
         <span class="self">self</span>.<span class="ident">deserialize_map</span>(<span class="ident">visitor</span>)
     }
@@ -827,14 +829,14 @@
     <span class="kw">fn</span> <span class="ident">deserialize_map</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>(
         <span class="self">self</span>,
         <span class="ident">visitor</span>: <span class="ident">V</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V</span>::<span class="ident">Value</span><span class="op">&gt;</span>
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">V::Value</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">V</span>: <span class="ident">de</span>::<span class="ident">Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
+        <span class="ident">V</span>: <span class="ident">de::Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
     {
         <span class="ident">visitor</span>.<span class="ident">visit_map</span>(<span class="self">self</span>.<span class="ident">inner</span>)
     }
 
-    <span class="ident">serde</span>::<span class="macro">forward_to_deserialize_any</span><span class="macro">!</span> {
+    <span class="macro">serde::forward_to_deserialize_any!</span> {
         <span class="ident">bool</span> <span class="ident">u8</span> <span class="ident">u16</span> <span class="ident">u32</span> <span class="ident">u64</span> <span class="ident">i8</span> <span class="ident">i16</span> <span class="ident">i32</span> <span class="ident">i64</span> <span class="ident">f32</span> <span class="ident">f64</span> <span class="ident">char</span> <span class="ident">str</span> <span class="ident">string</span> <span class="ident">unit</span> <span class="ident">seq</span>
         <span class="ident">bytes</span> <span class="ident">byte_buf</span> <span class="ident">unit_struct</span> <span class="ident">tuple_struct</span>
         <span class="ident">identifier</span> <span class="ident">tuple</span> <span class="ident">ignored_any</span> <span class="ident">option</span> <span class="ident">newtype_struct</span> <span class="kw">enum</span>
@@ -843,23 +845,23 @@
 }
 
 <span class="doccomment">/// Deserializes a type based on information stored in env variables</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_env</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_env</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">T</span>: <span class="ident">de</span>::<span class="ident">DeserializeOwned</span>,
+    <span class="ident">T</span>: <span class="ident">de::DeserializeOwned</span>,
 {
-    <span class="ident">from_iter</span>(<span class="ident">env</span>::<span class="ident">vars</span>())
+    <span class="ident">from_iter</span>(<span class="ident">env::vars</span>())
 }
 
 <span class="doccomment">/// Deserializes a type based on an iterable of `(String, String)`</span>
 <span class="doccomment">/// representing keys and values</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_iter</span><span class="op">&lt;</span><span class="ident">Iter</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">iter</span>: <span class="ident">Iter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_iter</span><span class="op">&lt;</span><span class="ident">Iter</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">iter</span>: <span class="ident">Iter</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">T</span>: <span class="ident">de</span>::<span class="ident">DeserializeOwned</span>,
+    <span class="ident">T</span>: <span class="ident">de::DeserializeOwned</span>,
     <span class="ident">Iter</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">String</span>, <span class="ident">String</span>)<span class="op">&gt;</span>,
 {
-    <span class="ident">T</span>::<span class="ident">deserialize</span>(<span class="ident">Deserializer</span>::<span class="ident">new</span>(<span class="ident">iter</span>.<span class="ident">into_iter</span>())).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">error</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">error</span> {
-        <span class="ident">Error</span>::<span class="ident">MissingValue</span>(<span class="ident">value</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">MissingValue</span>(<span class="ident">value</span>.<span class="ident">to_uppercase</span>()),
-        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">error</span>,
+    <span class="ident">T::deserialize</span>(<span class="ident">Deserializer::new</span>(<span class="ident">iter</span>.<span class="ident">into_iter</span>())).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">error</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">error</span> {
+        <span class="ident">Error::MissingValue</span>(<span class="ident">value</span>) =&gt; <span class="ident">Error::MissingValue</span>(<span class="ident">value</span>.<span class="ident">to_uppercase</span>()),
+        <span class="kw">_</span> =&gt; <span class="ident">error</span>,
     })
 }
 
@@ -870,23 +872,23 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Prefixed</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Deserializes a type based on prefixed env variables</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_env</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_env</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">T</span>: <span class="ident">de</span>::<span class="ident">DeserializeOwned</span>,
+        <span class="ident">T</span>: <span class="ident">de::DeserializeOwned</span>,
     {
-        <span class="self">self</span>.<span class="ident">from_iter</span>(<span class="ident">env</span>::<span class="ident">vars</span>())
+        <span class="self">self</span>.<span class="ident">from_iter</span>(<span class="ident">env::vars</span>())
     }
 
     <span class="doccomment">/// Deserializes a type based on prefixed (String, String) tuples</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_iter</span><span class="op">&lt;</span><span class="ident">Iter</span>, <span class="ident">T</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">iter</span>: <span class="ident">Iter</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">T</span>: <span class="ident">de</span>::<span class="ident">DeserializeOwned</span>,
+        <span class="ident">T</span>: <span class="ident">de::DeserializeOwned</span>,
         <span class="ident">Iter</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="ident">String</span>, <span class="ident">String</span>)<span class="op">&gt;</span>,
     {
-        <span class="kw">crate</span>::<span class="ident">from_iter</span>(<span class="ident">iter</span>.<span class="ident">into_iter</span>().<span class="ident">filter_map</span>(<span class="op">|</span>(<span class="ident">k</span>, <span class="ident">v</span>)<span class="op">|</span> {
+        <span class="ident"><span class="kw">crate</span>::from_iter</span>(<span class="ident">iter</span>.<span class="ident">into_iter</span>().<span class="ident">filter_map</span>(<span class="op">|</span>(<span class="ident">k</span>, <span class="ident">v</span>)<span class="op">|</span> {
             <span class="kw">if</span> <span class="ident">k</span>.<span class="ident">starts_with</span>(<span class="self">self</span>.<span class="number">0</span>.<span class="ident">as_ref</span>()) {
                 <span class="prelude-val">Some</span>((<span class="ident">k</span>.<span class="ident">trim_start_matches</span>(<span class="self">self</span>.<span class="number">0</span>.<span class="ident">as_ref</span>()).<span class="ident">to_owned</span>(), <span class="ident">v</span>))
             } <span class="kw">else</span> {
@@ -894,10 +896,10 @@
             }
         }))
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">error</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">error</span> {
-            <span class="ident">Error</span>::<span class="ident">MissingValue</span>(<span class="ident">value</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">MissingValue</span>(
-                <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{prefix}{value}&quot;</span>, <span class="ident">prefix</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>, <span class="ident">value</span> <span class="op">=</span> <span class="ident">value</span>).<span class="ident">to_uppercase</span>(),
+            <span class="ident">Error::MissingValue</span>(<span class="ident">value</span>) =&gt; <span class="ident">Error::MissingValue</span>(
+                <span class="macro">format!</span>(<span class="string">&quot;{prefix}{value}&quot;</span>, <span class="ident">prefix</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>, <span class="ident">value</span> <span class="op">=</span> <span class="ident">value</span>).<span class="ident">to_uppercase</span>(),
             ),
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">error</span>,
+            <span class="kw">_</span> =&gt; <span class="ident">error</span>,
         })
     }
 }
@@ -924,7 +926,7 @@
 <span class="doccomment">///     Err(error) =&gt; eprintln!(&quot;{:#?}&quot;, error),</span>
 <span class="doccomment">/// }</span>
 <span class="doccomment">/// ```</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">prefixed</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">C</span><span class="op">&gt;</span>(<span class="ident">prefix</span>: <span class="ident">C</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Prefixed</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">prefixed</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">C</span><span class="op">&gt;</span>(<span class="ident">prefix</span>: <span class="ident">C</span>) -&gt; <span class="ident">Prefixed</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">C</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 {
@@ -934,8 +936,8 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">Deserialize</span>;
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
+    <span class="kw">use</span> <span class="ident">serde::Deserialize</span>;
+    <span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
 
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Deserialize</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;lowercase&quot;</span>)]</span>
@@ -946,12 +948,12 @@
     }
 
     <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Size</span> {
-        <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Size</span> {
-            <span class="ident">Size</span>::<span class="ident">Medium</span>
+        <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="ident">Size</span> {
+            <span class="ident">Size::Medium</span>
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">default_kaboom</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">default_kaboom</span>() -&gt; <span class="ident">u16</span> {
         <span class="number">8080</span>
     }
 
@@ -977,124 +979,124 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">deserialize_from_iter</span>() {
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;BAR&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;BAZ&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;true&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;DOOM&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;1,2,3&quot;</span>)),
+        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec!</span>[
+            (<span class="ident">String::from</span>(<span class="string">&quot;BAR&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;test&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;BAZ&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;true&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;DOOM&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;1, 2, 3 &quot;</span>)),
             <span class="comment">// Empty string should result in empty vector.</span>
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;BOOM&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;SIZE&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;small&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;PROVIDED&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;NEWTYPE&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;42&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;BOOM&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;SIZE&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;small&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;PROVIDED&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;test&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;NEWTYPE&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;42&quot;</span>)),
         ];
         <span class="kw">match</span> <span class="ident">from_iter</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">Foo</span><span class="op">&gt;</span>(<span class="ident">data</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">actual</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="prelude-val">Ok</span>(<span class="ident">actual</span>) =&gt; <span class="macro">assert_eq!</span>(
                 <span class="ident">actual</span>,
                 <span class="ident">Foo</span> {
-                    <span class="ident">bar</span>: <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>),
+                    <span class="ident">bar</span>: <span class="ident">String::from</span>(<span class="string">&quot;test&quot;</span>),
                     <span class="ident">baz</span>: <span class="bool-val">true</span>,
                     <span class="ident">zoom</span>: <span class="prelude-val">None</span>,
-                    <span class="ident">doom</span>: <span class="macro">vec</span><span class="macro">!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],
-                    <span class="ident">boom</span>: <span class="macro">vec</span><span class="macro">!</span>[],
+                    <span class="ident">doom</span>: <span class="macro">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],
+                    <span class="ident">boom</span>: <span class="macro">vec!</span>[],
                     <span class="ident">kaboom</span>: <span class="number">8080</span>,
                     <span class="ident">debug_mode</span>: <span class="bool-val">false</span>,
-                    <span class="ident">size</span>: <span class="ident">Size</span>::<span class="ident">Small</span>,
-                    <span class="ident">provided</span>: <span class="prelude-val">Some</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>)),
+                    <span class="ident">size</span>: <span class="ident">Size::Small</span>,
+                    <span class="ident">provided</span>: <span class="prelude-val">Some</span>(<span class="ident">String::from</span>(<span class="string">&quot;test&quot;</span>)),
                     <span class="ident">newtype</span>: <span class="ident">CustomNewType</span>(<span class="number">42</span>)
                 }
             ),
-            <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;{:#?}&quot;</span>, <span class="ident">e</span>),
+            <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;{:#?}&quot;</span>, <span class="ident">e</span>),
         }
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">fails_with_missing_value</span>() {
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;BAR&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;BAZ&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;true&quot;</span>)),
+        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec!</span>[
+            (<span class="ident">String::from</span>(<span class="string">&quot;BAR&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;test&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;BAZ&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;true&quot;</span>)),
         ];
         <span class="kw">match</span> <span class="ident">from_iter</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">Foo</span><span class="op">&gt;</span>(<span class="ident">data</span>) {
-            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;expected failure&quot;</span>),
-            <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">e</span>, <span class="ident">Error</span>::<span class="ident">MissingValue</span>(<span class="string">&quot;DOOM&quot;</span>.<span class="ident">into</span>())),
+            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;expected failure&quot;</span>),
+            <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; <span class="macro">assert_eq!</span>(<span class="ident">e</span>, <span class="ident">Error::MissingValue</span>(<span class="string">&quot;DOOM&quot;</span>.<span class="ident">into</span>())),
         }
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">prefixed_fails_with_missing_value</span>() {
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;PREFIX_BAR&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;PREFIX_BAZ&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;true&quot;</span>)),
+        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec!</span>[
+            (<span class="ident">String::from</span>(<span class="string">&quot;PREFIX_BAR&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;test&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;PREFIX_BAZ&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;true&quot;</span>)),
         ];
 
         <span class="kw">match</span> <span class="ident">prefixed</span>(<span class="string">&quot;PREFIX_&quot;</span>).<span class="ident">from_iter</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">Foo</span><span class="op">&gt;</span>(<span class="ident">data</span>) {
-            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;expected failure&quot;</span>),
-            <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">e</span>, <span class="ident">Error</span>::<span class="ident">MissingValue</span>(<span class="string">&quot;PREFIX_DOOM&quot;</span>.<span class="ident">into</span>())),
+            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;expected failure&quot;</span>),
+            <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; <span class="macro">assert_eq!</span>(<span class="ident">e</span>, <span class="ident">Error::MissingValue</span>(<span class="string">&quot;PREFIX_DOOM&quot;</span>.<span class="ident">into</span>())),
         }
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">fails_with_invalid_type</span>() {
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;BAR&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;BAZ&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;notabool&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;DOOM&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;1,2,3&quot;</span>)),
+        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec!</span>[
+            (<span class="ident">String::from</span>(<span class="string">&quot;BAR&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;test&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;BAZ&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;notabool&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;DOOM&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;1,2,3&quot;</span>)),
         ];
         <span class="kw">match</span> <span class="ident">from_iter</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">Foo</span><span class="op">&gt;</span>(<span class="ident">data</span>) {
-            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;expected failure&quot;</span>),
-            <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;expected failure&quot;</span>),
+            <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; <span class="macro">assert_eq!</span>(
                 <span class="ident">e</span>,
-                <span class="ident">Error</span>::<span class="ident">Custom</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;provided string was not `true` or `false` while parsing value \&#39;notabool\&#39; provided by BAZ&quot;</span>))
+                <span class="ident">Error::Custom</span>(<span class="ident">String::from</span>(<span class="string">&quot;provided string was not `true` or `false` while parsing value \&#39;notabool\&#39; provided by BAZ&quot;</span>))
             ),
         }
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">deserializes_from_prefixed_fieldnames</span>() {
-        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;APP_BAR&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;APP_BAZ&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;true&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;APP_DOOM&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;APP_BOOM&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;4,5&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;APP_SIZE&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;small&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;APP_PROVIDED&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>)),
-            (<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;APP_NEWTYPE&quot;</span>), <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;42&quot;</span>)),
+        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec!</span>[
+            (<span class="ident">String::from</span>(<span class="string">&quot;APP_BAR&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;test&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;APP_BAZ&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;true&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;APP_DOOM&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;APP_BOOM&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;4,5&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;APP_SIZE&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;small&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;APP_PROVIDED&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;test&quot;</span>)),
+            (<span class="ident">String::from</span>(<span class="string">&quot;APP_NEWTYPE&quot;</span>), <span class="ident">String::from</span>(<span class="string">&quot;42&quot;</span>)),
         ];
         <span class="kw">match</span> <span class="ident">prefixed</span>(<span class="string">&quot;APP_&quot;</span>).<span class="ident">from_iter</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">Foo</span><span class="op">&gt;</span>(<span class="ident">data</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">actual</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="prelude-val">Ok</span>(<span class="ident">actual</span>) =&gt; <span class="macro">assert_eq!</span>(
                 <span class="ident">actual</span>,
                 <span class="ident">Foo</span> {
-                    <span class="ident">bar</span>: <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>),
+                    <span class="ident">bar</span>: <span class="ident">String::from</span>(<span class="string">&quot;test&quot;</span>),
                     <span class="ident">baz</span>: <span class="bool-val">true</span>,
                     <span class="ident">zoom</span>: <span class="prelude-val">None</span>,
-                    <span class="ident">doom</span>: <span class="macro">vec</span><span class="macro">!</span>[],
-                    <span class="ident">boom</span>: <span class="macro">vec</span><span class="macro">!</span>[<span class="string">&quot;4&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;5&quot;</span>.<span class="ident">to_string</span>()],
+                    <span class="ident">doom</span>: <span class="macro">vec!</span>[],
+                    <span class="ident">boom</span>: <span class="macro">vec!</span>[<span class="string">&quot;4&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;5&quot;</span>.<span class="ident">to_string</span>()],
                     <span class="ident">kaboom</span>: <span class="number">8080</span>,
                     <span class="ident">debug_mode</span>: <span class="bool-val">false</span>,
-                    <span class="ident">size</span>: <span class="ident">Size</span>::<span class="ident">Small</span>,
-                    <span class="ident">provided</span>: <span class="prelude-val">Some</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;test&quot;</span>)),
+                    <span class="ident">size</span>: <span class="ident">Size::Small</span>,
+                    <span class="ident">provided</span>: <span class="prelude-val">Some</span>(<span class="ident">String::from</span>(<span class="string">&quot;test&quot;</span>)),
                     <span class="ident">newtype</span>: <span class="ident">CustomNewType</span>(<span class="number">42</span>)
                 }
             ),
-            <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;{:#?}&quot;</span>, <span class="ident">e</span>),
+            <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;{:#?}&quot;</span>, <span class="ident">e</span>),
         }
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">prefixed_strips_prefixes</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">expected</span> <span class="op">=</span> <span class="ident">HashMap</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">expected</span> <span class="op">=</span> <span class="ident">HashMap::new</span>();
         <span class="ident">expected</span>.<span class="ident">insert</span>(<span class="string">&quot;foo&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;bar&quot;</span>.<span class="ident">to_string</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
-            <span class="ident">prefixed</span>(<span class="string">&quot;PRE_&quot;</span>).<span class="ident">from_iter</span>(<span class="macro">vec</span><span class="macro">!</span>[(<span class="string">&quot;PRE_FOO&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;bar&quot;</span>.<span class="ident">to_string</span>())]),
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">prefixed</span>(<span class="string">&quot;PRE_&quot;</span>).<span class="ident">from_iter</span>(<span class="macro">vec!</span>[(<span class="string">&quot;PRE_FOO&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;bar&quot;</span>.<span class="ident">to_string</span>())]),
             <span class="prelude-val">Ok</span>(<span class="ident">expected</span>)
         );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">prefixed_doesnt_parse_non_prefixed</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">expected</span> <span class="op">=</span> <span class="ident">HashMap</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">expected</span> <span class="op">=</span> <span class="ident">HashMap::new</span>();
         <span class="ident">expected</span>.<span class="ident">insert</span>(<span class="string">&quot;foo&quot;</span>.<span class="ident">to_string</span>(), <span class="number">12</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(
-            <span class="ident">prefixed</span>(<span class="string">&quot;PRE_&quot;</span>).<span class="ident">from_iter</span>(<span class="macro">vec</span><span class="macro">!</span>[
+        <span class="macro">assert_eq!</span>(
+            <span class="ident">prefixed</span>(<span class="string">&quot;PRE_&quot;</span>).<span class="ident">from_iter</span>(<span class="macro">vec!</span>[
                 (<span class="string">&quot;FOO&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;asd&quot;</span>.<span class="ident">to_string</span>()),
                 (<span class="string">&quot;PRE_FOO&quot;</span>.<span class="ident">to_string</span>(), <span class="string">&quot;12&quot;</span>.<span class="ident">to_string</span>())
             ]),
@@ -1102,6 +1104,7 @@
         );
     }
 }
-</pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="envy" data-search-js="../../search-index.js"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>
+</code></pre></div>
+</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="envy" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
+    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script>
+</body></html>
