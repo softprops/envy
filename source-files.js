@@ -1,3 +1,3 @@
-var N = null;var sourcesIndex = {};
+var sourcesIndex = {};
 sourcesIndex["envy"] = {"name":"","files":["error.rs","lib.rs"]};
 createSourceSidebar();
