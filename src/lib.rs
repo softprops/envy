@@ -469,13 +469,13 @@ mod tests {
     #[test]
     fn prefixed_fails_with_missing_value() {
         let data = vec![
-            (String::from("prefix_BAR"), String::from("test")),
-            (String::from("prefix_BAZ"), String::from("true")),
+            (String::from("PREFIX_BAR"), String::from("test")),
+            (String::from("PREFIX_BAZ"), String::from("true")),
         ];
 
-        match prefixed("prefix_").from_iter::<_, Foo>(data) {
+        match prefixed("PREFIX_").from_iter::<_, Foo>(data) {
             Ok(_) => panic!("expected failure"),
-            Err(e) => assert_eq!(e, Error::MissingValue("prefix_DOOM".into())),
+            Err(e) => assert_eq!(e, Error::MissingValue("PREFIX_DOOM".into())),
         }
     }
 
@@ -498,15 +498,15 @@ mod tests {
     #[test]
     fn deserializes_from_prefixed_fieldnames() {
         let data = vec![
-            (String::from("app_BAR"), String::from("test")),
-            (String::from("app_BAZ"), String::from("true")),
-            (String::from("app_DOOM"), String::from("")),
-            (String::from("app_BOOM"), String::from("4,5")),
-            (String::from("app_SIZE"), String::from("small")),
-            (String::from("app_PROVIDED"), String::from("test")),
-            (String::from("app_NEWTYPE"), String::from("42")),
+            (String::from("APP_BAR"), String::from("test")),
+            (String::from("APP_BAZ"), String::from("true")),
+            (String::from("APP_DOOM"), String::from("")),
+            (String::from("APP_BOOM"), String::from("4,5")),
+            (String::from("APP_SIZE"), String::from("small")),
+            (String::from("APP_PROVIDED"), String::from("test")),
+            (String::from("APP_NEWTYPE"), String::from("42")),
         ];
-        match prefixed("app_").from_iter::<_, Foo>(data) {
+        match prefixed("APP_").from_iter::<_, Foo>(data) {
             Ok(actual) => assert_eq!(
                 actual,
                 Foo {
@@ -531,7 +531,7 @@ mod tests {
         let mut expected = HashMap::new();
         expected.insert("foo".to_string(), "bar".to_string());
         assert_eq!(
-            prefixed("pre_").from_iter(vec![("pre_foo".to_string(), "bar".to_string())]),
+            prefixed("PRE_").from_iter(vec![("PRE_foo".to_string(), "bar".to_string())]),
             Ok(expected)
         );
     }
@@ -541,9 +541,9 @@ mod tests {
         let mut expected = HashMap::new();
         expected.insert("foo".to_string(), 12);
         assert_eq!(
-            prefixed("pre_").from_iter(vec![
+            prefixed("PRE_").from_iter(vec![
                 ("foo".to_string(), "asd".to_string()),
-                ("pre_foo".to_string(), "12".to_string())
+                ("PRE_foo".to_string(), "12".to_string())
             ]),
             Ok(expected)
         );
