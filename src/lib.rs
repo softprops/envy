@@ -105,7 +105,7 @@ impl<Iter: Iterator<Item = (String, String)>> Iterator for Vars<Iter> {
     fn next(&mut self) -> Option<Self::Item> {
         self.0
             .next()
-            .map(|(k, v)| (VarName(k.to_lowercase()), Val(k, v)))
+            .map(|(k, v)| (VarName(k.clone()), Val(k, v)))
     }
 }
 
@@ -405,6 +405,7 @@ mod tests {
     pub struct CustomNewType(u32);
 
     #[derive(Deserialize, Debug, PartialEq)]
+    #[serde(rename_all="SCREAMING_SNAKE_CASE")]
     pub struct Foo {
         bar: String,
         baz: bool,
@@ -424,14 +425,14 @@ mod tests {
     #[test]
     fn deserialize_from_iter() {
         let data = vec![
-            (String::from("bar"), String::from("test")),
-            (String::from("baz"), String::from("true")),
-            (String::from("doom"), String::from("1, 2, 3 ")),
+            (String::from("BAR"), String::from("test")),
+            (String::from("BAZ"), String::from("true")),
+            (String::from("DOOM"), String::from("1, 2, 3 ")),
             // Empty string should result in empty vector.
-            (String::from("boom"), String::from("")),
-            (String::from("size"), String::from("small")),
-            (String::from("provided"), String::from("test")),
-            (String::from("newtype"), String::from("42")),
+            (String::from("BOOM"), String::from("")),
+            (String::from("SIZE"), String::from("small")),
+            (String::from("PROVIDED"), String::from("test")),
+            (String::from("NEWTYPE"), String::from("42")),
         ];
         match from_iter::<_, Foo>(data) {
             Ok(actual) => assert_eq!(
@@ -456,40 +457,40 @@ mod tests {
     #[test]
     fn fails_with_missing_value() {
         let data = vec![
-            (String::from("bar"), String::from("test")),
-            (String::from("baz"), String::from("true")),
+            (String::from("BAR"), String::from("test")),
+            (String::from("BAZ"), String::from("true")),
         ];
         match from_iter::<_, Foo>(data) {
             Ok(_) => panic!("expected failure"),
-            Err(e) => assert_eq!(e, Error::MissingValue("doom".into())),
+            Err(e) => assert_eq!(e, Error::MissingValue("DOOM".into())),
         }
     }
 
     #[test]
     fn prefixed_fails_with_missing_value() {
         let data = vec![
-            (String::from("prefix_bar"), String::from("test")),
-            (String::from("prefix_baz"), String::from("true")),
+            (String::from("prefix_BAR"), String::from("test")),
+            (String::from("prefix_BAZ"), String::from("true")),
         ];
 
         match prefixed("prefix_").from_iter::<_, Foo>(data) {
             Ok(_) => panic!("expected failure"),
-            Err(e) => assert_eq!(e, Error::MissingValue("prefix_doom".into())),
+            Err(e) => assert_eq!(e, Error::MissingValue("prefix_DOOM".into())),
         }
     }
 
     #[test]
     fn fails_with_invalid_type() {
         let data = vec![
-            (String::from("bar"), String::from("test")),
-            (String::from("baz"), String::from("notabool")),
-            (String::from("doom"), String::from("1,2,3")),
+            (String::from("BAR"), String::from("test")),
+            (String::from("BAZ"), String::from("notabool")),
+            (String::from("DOOM"), String::from("1,2,3")),
         ];
         match from_iter::<_, Foo>(data) {
             Ok(_) => panic!("expected failure"),
             Err(e) => assert_eq!(
                 e,
-                Error::Custom(String::from("provided string was not `true` or `false` while parsing value \'notabool\' provided by baz"))
+                Error::Custom(String::from("provided string was not `true` or `false` while parsing value \'notabool\' provided by BAZ"))
             ),
         }
     }
@@ -497,13 +498,13 @@ mod tests {
     #[test]
     fn deserializes_from_prefixed_fieldnames() {
         let data = vec![
-            (String::from("app_bar"), String::from("test")),
-            (String::from("app_baz"), String::from("true")),
-            (String::from("app_doom"), String::from("")),
-            (String::from("app_boom"), String::from("4,5")),
-            (String::from("app_size"), String::from("small")),
-            (String::from("app_provided"), String::from("test")),
-            (String::from("app_newtype"), String::from("42")),
+            (String::from("app_BAR"), String::from("test")),
+            (String::from("app_BAZ"), String::from("true")),
+            (String::from("app_DOOM"), String::from("")),
+            (String::from("app_BOOM"), String::from("4,5")),
+            (String::from("app_SIZE"), String::from("small")),
+            (String::from("app_PROVIDED"), String::from("test")),
+            (String::from("app_NEWTYPE"), String::from("42")),
         ];
         match prefixed("app_").from_iter::<_, Foo>(data) {
             Ok(actual) => assert_eq!(
