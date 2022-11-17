@@ -4,7 +4,7 @@ use std::{error::Error as StdError, fmt};
 
 /// Types of errors that may result from failed attempts
 /// to deserialize a type from env vars
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Error {
     MissingValue(String),
     Custom(String),
