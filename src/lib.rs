@@ -547,7 +547,7 @@ mod tests {
     }
 
     #[test]
-    fn deserialize_rename_field() {
+    fn deserialize_with_rename_attributes() {
         #[derive(Deserialize, Debug, PartialEq)]
         #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
         pub struct FooRename {
