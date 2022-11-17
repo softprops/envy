@@ -103,9 +103,7 @@ impl<Iter: Iterator<Item = (String, String)>> Iterator for Vars<Iter> {
     type Item = (VarName, Val);
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.0
-            .next()
-            .map(|(k, v)| (VarName(k.clone()), Val(k, v)))
+        self.0.next().map(|(k, v)| (VarName(k.clone()), Val(k, v)))
     }
 }
 
@@ -340,9 +338,9 @@ impl<'a> Prefixed<'a> {
             }
         }))
         .map_err(|error| match error {
-            Error::MissingValue(value) => Error::MissingValue(
-                format!("{prefix}{value}", prefix = self.0, value = value),
-            ),
+            Error::MissingValue(value) => {
+                Error::MissingValue(format!("{prefix}{value}", prefix = self.0, value = value))
+            }
             _ => error,
         })
     }
@@ -405,7 +403,6 @@ mod tests {
     pub struct CustomNewType(u32);
 
     #[derive(Deserialize, Debug, PartialEq)]
-    #[serde(rename_all="SCREAMING_SNAKE_CASE")]
     pub struct Foo {
         bar: String,
         baz: bool,
@@ -425,14 +422,14 @@ mod tests {
     #[test]
     fn deserialize_from_iter() {
         let data = vec![
-            (String::from("BAR"), String::from("test")),
-            (String::from("BAZ"), String::from("true")),
-            (String::from("DOOM"), String::from("1, 2, 3 ")),
+            (String::from("bar"), String::from("test")),
+            (String::from("baz"), String::from("true")),
+            (String::from("doom"), String::from("1, 2, 3 ")),
             // Empty string should result in empty vector.
-            (String::from("BOOM"), String::from("")),
-            (String::from("SIZE"), String::from("small")),
-            (String::from("PROVIDED"), String::from("test")),
-            (String::from("NEWTYPE"), String::from("42")),
+            (String::from("boom"), String::from("")),
+            (String::from("size"), String::from("small")),
+            (String::from("provided"), String::from("test")),
+            (String::from("newtype"), String::from("42")),
         ];
         match from_iter::<_, Foo>(data) {
             Ok(actual) => assert_eq!(
@@ -457,40 +454,40 @@ mod tests {
     #[test]
     fn fails_with_missing_value() {
         let data = vec![
-            (String::from("BAR"), String::from("test")),
-            (String::from("BAZ"), String::from("true")),
+            (String::from("bar"), String::from("test")),
+            (String::from("baz"), String::from("true")),
         ];
         match from_iter::<_, Foo>(data) {
             Ok(_) => panic!("expected failure"),
-            Err(e) => assert_eq!(e, Error::MissingValue("DOOM".into())),
+            Err(e) => assert_eq!(e, Error::MissingValue("doom".into())),
         }
     }
 
     #[test]
     fn prefixed_fails_with_missing_value() {
         let data = vec![
-            (String::from("PREFIX_BAR"), String::from("test")),
-            (String::from("PREFIX_BAZ"), String::from("true")),
+            (String::from("PREFIX_bar"), String::from("test")),
+            (String::from("PREFIX_baz"), String::from("true")),
         ];
 
         match prefixed("PREFIX_").from_iter::<_, Foo>(data) {
             Ok(_) => panic!("expected failure"),
-            Err(e) => assert_eq!(e, Error::MissingValue("PREFIX_DOOM".into())),
+            Err(e) => assert_eq!(e, Error::MissingValue("PREFIX_doom".into())),
         }
     }
 
     #[test]
     fn fails_with_invalid_type() {
         let data = vec![
-            (String::from("BAR"), String::from("test")),
-            (String::from("BAZ"), String::from("notabool")),
-            (String::from("DOOM"), String::from("1,2,3")),
+            (String::from("bar"), String::from("test")),
+            (String::from("baz"), String::from("notabool")),
+            (String::from("doom"), String::from("1,2,3")),
         ];
         match from_iter::<_, Foo>(data) {
             Ok(_) => panic!("expected failure"),
             Err(e) => assert_eq!(
                 e,
-                Error::Custom(String::from("provided string was not `true` or `false` while parsing value \'notabool\' provided by BAZ"))
+                Error::Custom(String::from("provided string was not `true` or `false` while parsing value \'notabool\' provided by baz"))
             ),
         }
     }
@@ -498,13 +495,13 @@ mod tests {
     #[test]
     fn deserializes_from_prefixed_fieldnames() {
         let data = vec![
-            (String::from("APP_BAR"), String::from("test")),
-            (String::from("APP_BAZ"), String::from("true")),
-            (String::from("APP_DOOM"), String::from("")),
-            (String::from("APP_BOOM"), String::from("4,5")),
-            (String::from("APP_SIZE"), String::from("small")),
-            (String::from("APP_PROVIDED"), String::from("test")),
-            (String::from("APP_NEWTYPE"), String::from("42")),
+            (String::from("APP_bar"), String::from("test")),
+            (String::from("APP_baz"), String::from("true")),
+            (String::from("APP_doom"), String::from("")),
+            (String::from("APP_boom"), String::from("4,5")),
+            (String::from("APP_size"), String::from("small")),
+            (String::from("APP_provided"), String::from("test")),
+            (String::from("APP_newtype"), String::from("42")),
         ];
         match prefixed("APP_").from_iter::<_, Foo>(data) {
             Ok(actual) => assert_eq!(
@@ -547,5 +544,34 @@ mod tests {
             ]),
             Ok(expected)
         );
+    }
+
+    #[test]
+    fn deserialize_rename_field() {
+        #[derive(Deserialize, Debug, PartialEq)]
+        #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+        pub struct FooRename {
+            bar: String,
+            bar_snake: String,
+            #[serde(rename = "FooRename")]
+            foo: String,
+        }
+
+        let data = vec![
+            (String::from("BAR"), String::from("dummy string 1")),
+            (String::from("BAR_SNAKE"), String::from("dummy string 2")),
+            (String::from("FooRename"), String::from("dummy string 3")),
+        ];
+        match from_iter::<_, FooRename>(data) {
+            Ok(actual) => assert_eq!(
+                actual,
+                FooRename {
+                    bar: String::from("dummy string 1"),
+                    bar_snake: String::from("dummy string 2"),
+                    foo: String::from("dummy string 3"),
+                }
+            ),
+            Err(e) => panic!("{:#?}", e),
+        }
     }
 }
