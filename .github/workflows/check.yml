@@ -1,0 +1,33 @@
+name: "Check CloudMQTT"
+
+on:
+  push:
+    branches: [main, staging, trying, release/*]
+  pull_request:
+    branches: [main, release/*]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  license:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.3.0
+      - name: Check License Lines
+        uses: kt3k/license_checker@v1.0.6
+  dco-check:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v3.3.0
+        with:
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@v4.5.0
+        with:
+          python-version: '3.x'
+      - name: Install gitlint
+        run: pip install gitlint
+      - run: gitlint --commits $(git merge-base origin/main HEAD)..
+
