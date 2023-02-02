@@ -1,3 +1,6 @@
 *.bk
 target
 Cargo.lock
+
+# Ignore direnv cache
+.direnv
