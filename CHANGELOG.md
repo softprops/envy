@@ -17,7 +17,7 @@
 
 * update `from_iter(..)` to accept `std::iter::IntoIterator` types
 
-This is a backwards compatible change because all Iterators have a [provided impl for IntoInterator](https://doc.rust-lang.org/src/core/iter/traits.rs.html#255-262) by default.
+This is a backwards compatible change because all Iterators have a [provided impl for IntoIterator](https://doc.rust-lang.org/src/core/iter/traits.rs.html#255-262) by default.
 
 # 0.3.2
 
