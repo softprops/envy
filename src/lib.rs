@@ -75,9 +75,18 @@ pub use crate::error::Error;
 /// A type result type specific to `envy::Errors`
 pub type Result<T> = std::result::Result<T, Error>;
 
-struct Vars<Iter>(Iter)
+#[derive(Default)]
+struct VarsOptions {
+    keep_names: bool,
+}
+
+struct Vars<Iter>
 where
-    Iter: IntoIterator<Item = (String, String)>;
+    Iter: IntoIterator<Item = (String, String)>,
+{
+    inner: Iter,
+    options: VarsOptions,
+}
 
 struct Val(String, String);
 
@@ -103,9 +112,14 @@ impl<Iter: Iterator<Item = (String, String)>> Iterator for Vars<Iter> {
     type Item = (VarName, Val);
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.0
-            .next()
-            .map(|(k, v)| (VarName(k.to_lowercase()), Val(k, v)))
+        self.inner.next().map(|(k, v)| {
+            let var_name = if self.options.keep_names {
+                k.clone()
+            } else {
+                k.to_lowercase()
+            };
+            (VarName(var_name), Val(k, v))
+        })
     }
 }
 
@@ -252,9 +266,15 @@ struct Deserializer<'de, Iter: Iterator<Item = (String, String)>> {
 }
 
 impl<'de, Iter: Iterator<Item = (String, String)>> Deserializer<'de, Iter> {
-    fn new(vars: Iter) -> Self {
+    fn new(
+        vars: Iter,
+        options: Option<VarsOptions>,
+    ) -> Self {
         Deserializer {
-            inner: MapDeserializer::new(Vars(vars)),
+            inner: MapDeserializer::new(Vars {
+                inner: vars,
+                options: options.unwrap_or_default(),
+            }),
         }
     }
 }
@@ -306,7 +326,7 @@ where
     T: de::DeserializeOwned,
     Iter: IntoIterator<Item = (String, String)>,
 {
-    T::deserialize(Deserializer::new(iter.into_iter())).map_err(|error| match error {
+    T::deserialize(Deserializer::new(iter.into_iter(), None)).map_err(|error| match error {
         Error::MissingValue(value) => Error::MissingValue(value.to_uppercase()),
         _ => error,
     })
@@ -380,6 +400,39 @@ where
     Prefixed(prefix.into())
 }
 
+/// A type which keeps the serde field names
+///
+/// These types are created with with the [keep_names](fn.keep_names.html) module function
+pub struct KeepNames;
+
+impl KeepNames {
+    /// Deserializes a type based on prefixed env variables
+    pub fn from_env<T>(&self) -> Result<T>
+    where
+        T: de::DeserializeOwned,
+    {
+        self.from_iter(env::vars())
+    }
+
+    /// Deserializes a type based on prefixed (String, String) tuples
+    pub fn from_iter<Iter, T>(
+        &self,
+        iter: Iter,
+    ) -> Result<T>
+    where
+        T: de::DeserializeOwned,
+        Iter: IntoIterator<Item = (String, String)>,
+    {
+        let options = VarsOptions { keep_names: true };
+        T::deserialize(Deserializer::new(iter.into_iter(), Some(options)))
+    }
+}
+
+/// Produces a instance of `KeepNames` for keeping the serde field names
+pub fn keep_names() -> KeepNames {
+    KeepNames {}
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -418,6 +471,15 @@ mod tests {
         size: Size,
         provided: Option<String>,
         newtype: CustomNewType,
+    }
+
+    #[derive(Deserialize, Debug, PartialEq)]
+    pub struct CrazyFoo {
+        #[serde(rename = "BaR")]
+        bar: String,
+        #[serde(rename = "SCREAMING_BAZ")]
+        screaming_baz: bool,
+        zoom: Option<u16>,
     }
 
     #[test]
@@ -545,5 +607,25 @@ mod tests {
             ]),
             Ok(expected)
         );
+    }
+
+    #[test]
+    fn keep_names_from_iter() {
+        let data = vec![
+            (String::from("BaR"), String::from("test")),
+            (String::from("SCREAMING_BAZ"), String::from("true")),
+            (String::from("zoom"), String::from("8080")),
+        ];
+        match keep_names().from_iter::<_, CrazyFoo>(data) {
+            Ok(actual) => assert_eq!(
+                actual,
+                CrazyFoo {
+                    bar: String::from("test"),
+                    screaming_baz: true,
+                    zoom: Some(8080),
+                }
+            ),
+            Err(e) => panic!("{:#?}", e),
+        }
     }
 }
