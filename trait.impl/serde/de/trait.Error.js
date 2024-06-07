@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"envy":[["impl <a class=\"trait\" href=\"https://docs.rs/serde/1.0.203/serde/de/trait.Error.html\" title=\"trait serde::de::Error\">Error</a> for <a class=\"enum\" href=\"envy/enum.Error.html\" title=\"enum envy::Error\">Error</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
