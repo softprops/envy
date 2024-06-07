@@ -9,7 +9,7 @@ repository = "https://github.com/softprops/envy"
 keywords = ["serde", "env"]
 license = "MIT"
 readme = "README.md"
-edition = "2018"
+edition = "2021"
 categories = [
   "config"
 ]
