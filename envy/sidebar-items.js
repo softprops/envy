@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Error"],"fn":["from_env","from_iter","prefixed"],"struct":["Prefixed"],"type":["Result"]};
+window.SIDEBAR_ITEMS = {"enum":["Error"],"fn":["from_env","from_iter","keep_names","prefixed"],"struct":["KeepNames","Prefixed"],"type":["Result"]};
