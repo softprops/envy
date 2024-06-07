@@ -4,7 +4,7 @@
 
 ## 📦  install
 
-Add the following to your `Cargo.toml` file.
+Run `cargo add envy` or add the following to your `Cargo.toml` file.
 
 ```toml
 [dependencies]
