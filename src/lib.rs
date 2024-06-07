@@ -367,7 +367,7 @@ impl<'a> Prefixed<'a> {
 /// }
 ///
 /// // all env variables will be expected to be prefixed with APP_
-/// // i.e. APP_FOO, APP_BAR, ect
+/// // i.e. APP_FOO, APP_BAR, etc
 /// match envy::prefixed("APP_").from_env::<Config>() {
 ///     Ok(config) => println!("{:#?}", config),
 ///     Err(error) => eprintln!("{:#?}", error),
