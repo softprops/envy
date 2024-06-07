@@ -965,9 +965,9 @@
     })
 }
 
-<span class="doccomment">/// A type which filters env vars with a prefix for use as serde field inputs
+<span class="doccomment">/// A type which filters env vars with a prefix for use as serde field inputs.
 ///
-/// These types are created with with the [prefixed](fn.prefixed.html) module function
+/// These types are created with the [prefixed](fn.prefixed.html) module function.
 </span><span class="kw">pub struct </span>Prefixed&lt;<span class="lifetime">'a</span>&gt;(Cow&lt;<span class="lifetime">'a</span>, str&gt;);
 
 <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Prefixed&lt;<span class="lifetime">'a</span>&gt; {
@@ -1033,9 +1033,9 @@
     Prefixed(prefix.into())
 }
 
-<span class="doccomment">/// A type which keeps the serde field names
+<span class="doccomment">/// A type which keeps the serde field names.
 ///
-/// These types are created with with the [keep_names](fn.keep_names.html) module function
+/// These types are created with the [keep_names](fn.keep_names.html) module function.
 </span><span class="kw">pub struct </span>KeepNames;
 
 <span class="kw">impl </span>KeepNames {
