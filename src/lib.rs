@@ -388,16 +388,12 @@ mod tests {
 
     #[derive(Deserialize, Debug, PartialEq)]
     #[serde(rename_all = "lowercase")]
+    #[derive(Default)]
     pub enum Size {
         Small,
+        #[default]
         Medium,
         Large,
-    }
-
-    impl Default for Size {
-        fn default() -> Size {
-            Size::Medium
-        }
     }
 
     pub fn default_kaboom() -> u16 {
