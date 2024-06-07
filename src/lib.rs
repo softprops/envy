@@ -332,9 +332,9 @@ where
     })
 }
 
-/// A type which filters env vars with a prefix for use as serde field inputs
+/// A type which filters env vars with a prefix for use as serde field inputs.
 ///
-/// These types are created with with the [prefixed](fn.prefixed.html) module function
+/// These types are created with the [prefixed](fn.prefixed.html) module function.
 pub struct Prefixed<'a>(Cow<'a, str>);
 
 impl<'a> Prefixed<'a> {
@@ -400,9 +400,9 @@ where
     Prefixed(prefix.into())
 }
 
-/// A type which keeps the serde field names
+/// A type which keeps the serde field names.
 ///
-/// These types are created with with the [keep_names](fn.keep_names.html) module function
+/// These types are created with the [keep_names](fn.keep_names.html) module function.
 pub struct KeepNames;
 
 impl KeepNames {
