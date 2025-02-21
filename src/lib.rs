@@ -76,7 +76,7 @@ pub use crate::error::Error;
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Default)]
-struct VarsOptions {
+pub struct VarsOptions {
     keep_names: bool,
 }
 
@@ -261,12 +261,12 @@ impl<'de> de::Deserializer<'de> for VarName {
 }
 
 /// A deserializer for env vars
-struct Deserializer<'de, Iter: Iterator<Item = (String, String)>> {
+pub struct Deserializer<'de, Iter: Iterator<Item = (String, String)>> {
     inner: MapDeserializer<'de, Vars<Iter>, Error>,
 }
 
 impl<'de, Iter: Iterator<Item = (String, String)>> Deserializer<'de, Iter> {
-    fn new(
+    pub fn new(
         vars: Iter,
         options: Option<VarsOptions>,
     ) -> Self {

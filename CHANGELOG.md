@@ -1,3 +1,7 @@
+# 0.4.3
+
+* Make `Deserializer` type public in order to allow to compose it with wrapper types
+
 # 0.4.2
 
 * Correctly deserialize empty strings into empty sequence [#51](https://github.com/softprops/envy/pull/51)
