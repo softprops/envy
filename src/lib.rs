@@ -138,6 +138,41 @@ macro_rules! forward_parsed_values {
     }
 }
 
+/// Parses string input into a boolean value.
+///
+/// Accepts various common boolean representations:
+/// - True values: "y", "yes", "t", "true", "on", "1"
+/// - False values: "f", "no", "n", "false", "off", "0"
+///
+/// Returns an error for any other input.
+///
+/// Implementation is heavily inspired by:
+/// - [str_to_bool](https://github.com/clap-rs/clap/blob/c3a1ddc1182fa7cf2cfe6d6dba4f76db83d48178/clap_builder/src/util/str_to_bool.rs) module from clap_builder
+/// - [humanfriendly.coerce_boolean](https://github.com/xolox/python-humanfriendly/blob/6758ac61f906cd8528682003070a57febe4ad3cf/humanfriendly/__init__.py#L91) from python-humanfriendly
+fn parse_boolean_like_str(s: &str) -> Result<bool> {
+    const TRUE_LITERALS: [&str; 6] = ["y", "yes", "t", "true", "on", "1"];
+    const FALSE_LITERALS: [&str; 6] = ["n", "no", "f", "false", "off", "0"];
+
+    let lower_s = s.trim().to_lowercase();
+
+    if TRUE_LITERALS.contains(&lower_s.as_str()) {
+        Ok(true)
+    } else if FALSE_LITERALS.contains(&lower_s.as_str()) {
+        Ok(false)
+    } else {
+        Err(de::Error::custom(format!(
+            "invalid boolean value '{}' - valid values: [{}]",
+            s,
+            TRUE_LITERALS
+                .into_iter()
+                .zip(FALSE_LITERALS.into_iter())
+                .flat_map(|(a, b)| [a, b])
+                .collect::<Vec<_>>()
+                .join(", ")
+        )))
+    }
+}
+
 impl<'de> de::Deserializer<'de> for Val {
     type Error = Error;
     fn deserialize_any<V>(
@@ -182,8 +217,23 @@ impl<'de> de::Deserializer<'de> for Val {
         visitor.visit_some(self)
     }
 
+    fn deserialize_bool<V>(
+        self,
+        visitor: V,
+    ) -> Result<V::Value>
+    where
+        V: de::Visitor<'de>,
+    {
+        match parse_boolean_like_str(&self.1) {
+            Ok(val) => val.into_deserializer().deserialize_bool(visitor),
+            Err(e) => Err(de::Error::custom(format_args!(
+                "{} while parsing value '{}' provided by {}",
+                e, self.1, self.0
+            ))),
+        }
+    }
+
     forward_parsed_values! {
-        bool => deserialize_bool,
         u8 => deserialize_u8,
         u16 => deserialize_u16,
         u32 => deserialize_u32,
@@ -548,10 +598,11 @@ mod tests {
         ];
         match from_iter::<_, Foo>(data) {
             Ok(_) => panic!("expected failure"),
-            Err(e) => assert_eq!(
-                e,
-                Error::Custom(String::from("provided string was not `true` or `false` while parsing value \'notabool\' provided by BAZ"))
-            ),
+            Err(e) => {
+                assert!(
+                    matches!(e, Error::Custom(s) if s.contains("invalid boolean value 'notabool'") && s.contains("provided by BAZ"))
+                )
+            }
         }
     }
 
@@ -626,6 +677,82 @@ mod tests {
                 }
             ),
             Err(e) => panic!("{:#?}", e),
+        }
+    }
+
+    const VALID_BOOLEAN_INPUTS: [(&str, bool); 25] = [
+        ("true", true),
+        ("TRUE", true),
+        ("True", true),
+        ("false", false),
+        ("FALSE", false),
+        ("False", false),
+        ("yes", true),
+        ("YES", true),
+        ("Yes", true),
+        ("no", false),
+        ("NO", false),
+        ("No", false),
+        ("on", true),
+        ("ON", true),
+        ("On", true),
+        ("off", false),
+        ("OFF", false),
+        ("Off", false),
+        ("1", true),
+        ("1 ", true),
+        ("0", false),
+        ("y", true),
+        ("Y", true),
+        ("n", false),
+        ("N", false),
+    ];
+
+    const INVALID_BOOLEAN_INPUTS: [&str; 6] = ["notabool", "asd", "TRU", "Noo", "dont", ""];
+
+    #[test]
+    fn parse_boolean_like_str_works() {
+        for (input, expected) in VALID_BOOLEAN_INPUTS {
+            let parsed_bool = parse_boolean_like_str(input).expect("expected success, got error");
+            assert_eq!(parsed_bool, expected);
+        }
+    }
+
+    #[test]
+    fn parse_boolean_like_str_fails_with_invalid_input() {
+        for input in INVALID_BOOLEAN_INPUTS {
+            let err = parse_boolean_like_str(input).unwrap_err();
+            assert!(
+                matches!(err, Error::Custom(s) if s.contains(format!("invalid boolean value '{}'", input).as_str()))
+            );
+        }
+    }
+    #[derive(Deserialize, Debug, PartialEq)]
+    struct BoolTest {
+        bar: bool,
+    }
+
+    #[test]
+    fn deserialize_bool_works() {
+        for (input, expected) in VALID_BOOLEAN_INPUTS {
+            let data = vec![(String::from("BAR"), String::from(input))];
+            let parsed = from_iter::<_, BoolTest>(data).expect("expected success, got error");
+            assert_eq!(parsed.bar, expected);
+        }
+    }
+
+    #[test]
+    fn deserialize_bool_fails_with_invalid_input() {
+        for input in INVALID_BOOLEAN_INPUTS {
+            let data = vec![(String::from("BAR"), String::from(input))];
+            let e = from_iter::<_, BoolTest>(data)
+                .expect_err(format!("expected Err for input: '{}' but got Ok", input).as_str());
+            assert!(
+                matches!(&e, Error::Custom(s) if s.contains(format!("invalid boolean value '{}'", input).as_str()) && s.contains("provided by BAR")),
+                "expected error to contain 'invalid boolean value '{}', got: {:#?}",
+                input,
+                e
+            )
         }
     }
 }
