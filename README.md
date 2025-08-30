@@ -84,7 +84,7 @@ $ FOO=8080 BAR=true BAZ=hello ZOOM=10 yourapp
 ```
 
 The common pattern for prefixing env var names for a specific app is supported using
-the `envy::prefixed(prefix)` interface. Asumming your env vars are prefixed with `APP_`
+the `envy::prefixed(prefix)` interface. Assuming your env vars are prefixed with `APP_`
 the above example may instead look like
 
 ```rust
