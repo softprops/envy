@@ -356,11 +356,8 @@ impl<'a> Prefixed<'a> {
         Iter: IntoIterator<Item = (String, String)>,
     {
         crate::from_iter(iter.into_iter().filter_map(|(k, v)| {
-            if k.starts_with(self.0.as_ref()) {
-                Some((k.trim_start_matches(self.0.as_ref()).to_owned(), v))
-            } else {
-                None
-            }
+            k.strip_prefix(self.0.as_ref())
+                .map(|name| (name.to_owned(), v))
         }))
         .map_err(|error| match error {
             Error::MissingValue(value) => Error::MissingValue(
@@ -627,5 +624,17 @@ mod tests {
             ),
             Err(e) => panic!("{:#?}", e),
         }
+    }
+
+    #[test]
+    fn prefixed_strips_prefix_only_once() {
+        // A field whose own name starts with the prefix must still match:
+        // env var APP_APP_FOO should map to field "app_foo".
+        let mut expected = HashMap::new();
+        expected.insert("app_foo".to_string(), "bar".to_string());
+        assert_eq!(
+            prefixed("APP_").from_iter(vec![("APP_APP_FOO".to_string(), "bar".to_string())]),
+            Ok(expected)
+        );
     }
 }
